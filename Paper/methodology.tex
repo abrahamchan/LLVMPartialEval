@@ -1,0 +1,10 @@
+\section{Methodology}
+
+A number of compiler-level partial evaluation strategies exist.
+We will implement one form of partial evaluation as a LLVM transformation pass.
+Our pass will apply static analysis to convert function calls to constants, by evaluating branch and loop conditions with function inputs at compile time.
+This simplified approach was presented by Fujita’s work on partial evaluations [5].
+Programs in C/C++ will be compiled to LLVM IR using the Clang front-end and the partial evaluation optimization pass will be applied subsequently on the generated IR.
+Then, we will compile the optimized program to an executable, in order to dynamically confirm program correctness.
+After program correctness is verified, we will measure the number of IR instructions reduced as a result of the partial evaluation optimization.
+Finally, we will evaluate and compare the error resilience of the program’s partial evaluation with its original unoptimized implementation through a series of fault injection experiments.

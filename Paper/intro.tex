@@ -1,0 +1,10 @@
+\section{Introduction}
+
+Software systems are steadily increasing in complexity, driven in large part by the ongoing demand for technological development [1]. 
+At the application level, compiler optimizations have been widely deployed to streamline program performance and conserve memory space [2]. 
+Particularly, the technique of partial evaluation has been explored as an aggressive form of program optimization by specialization [3].
+Partial evaluations reduce the program space to its minimal form required to yield a correct output from specific program inputs.
+While partial evaluations guarantee program correctness, it is not the only desired attribute in critical software systems.
+Fault tolerance is an important component in many systems that are expected to operate under extreme conditions [4].
+To the best of our knowledge, no existing studies explore the fault tolerance capability of programs optimized as partial evaluations.
+We aim to implement a LLVM compiler optimization pass to support partial evaluation and empirically study the impact on error resiliency in the optimized programs through fault injection experiments.
