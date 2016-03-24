@@ -1,6 +1,15 @@
 \section{Background and Motivating Example}
 
-In this section, we illustrate a functional example of our proposed partial evaluation compiler transformation.
+In this section, we introduce program optimization, partial evaluation and illustrate a functional example of our proposed partial evaluation compiler transformation.
+Program optimization is the process of modifying a software system to make it work more efficiently with lesser hardware resources such as CPU, memory while enables program to run more rapidly.
+
+Program optimization can take place at various levels from top to down starting design level. Good architectural design can greatly influence the overall performance of a program when the programmer can plan ahead of available resources, given goals and expected use.
+Good planning of program algorithms and data structures can also be important because the choice of algorithms and data structures affects more than any other aspect of the program. Data structures are more difficult to change than algorithms because data structure assumption and its performance assumptions are used throughout the program once the program is written. Although we can minimize the negative impact of bad design of algorithm by the use of abstract data types within function definitions, it is still a hard work to do if not planned well ahead of time. 
+
+Despite the above two program optimization methods, compiler optimization has been recognized as an effective way to optimize program when the overall program has been well built and optimization needs to be implemented at later stage. Techniques used in optimization can be broken up among various scopes to affect multi-level components of a program starting from a single statement to a code block. Optimizations aiming at different code structure and program scopes can have various types of optimizations such as loop optimization, data-flow optimization, SSA-based optimization, code generator optimization, functional language optimization and interprocedural optimization. 
+
+Although their exists various ways to optimize compiler to do program optimization, we should choose certain methods which can be specifically used to address certain kinds of program optimization by specialization. Partial Evaluation is an algorithm which, when given a program and some input data, can produce a specialized program or so-called residual program because running the program with the remaining input data will produce the same result comparing to the original program but will improve performance.
+
 Consider the following code snippet.
 The figure on the left shows the unoptimized program, while the figure on the right shows the partial evaluation optimization.
 Notice that the function call to foo2 is replaced with a constant instead.
