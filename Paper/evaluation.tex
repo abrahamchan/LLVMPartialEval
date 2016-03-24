@@ -3,9 +3,9 @@
 We aim to evaluate the error resilience of program partial evaluations through a series of fault injection experiments using LLFI~\cite{LLFI}, a LLVM based tool.
 LLFI injects a variety of hardware and software faults at the LLVM IR level using software implemented fault injection.
 For this project, we will focus on bit flips, stuck-ats, buffer overflows, function argument corruptions and invalid pointer corruptions.
-These faults broadly represent a range of common hardware and software faults [7], including permanent and transient faults. 
+These faults broadly represent a range of common hardware and software faults~\cite{V2005}, including permanent and transient faults. 
 
-We plan to run 1000 fault injections of each fault type on several C/C++ applications, drawn from the Parboil [8], and SPEC CPU2006 benchmarks [9] respectively.
+We plan to run 1000 fault injections of each fault type on several C/C++ applications, drawn from the Parboil~\cite{Parboil}, and SPEC CPU2006 benchmarks~\cite{SPEC} respectively.
 We will group the effects of injected faults on a program in the following failure modes: Silent Data Corruptions (SDCs) and Crashes/Hangs.
 We will then report the failure rates (i.e SDCs / 1000) for each failure mode by fault type.
 This process is performed once for the unoptimized program (base case) and again for the program’s partial evaluation.
