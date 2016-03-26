@@ -1,5 +1,20 @@
 \section{Related Work}
 \label{sec:related-work}
 
-Since Futamura first proposed the use of compile time partial evaluation in the 1970’s~\cite{Futamura}, partial evaluation has been well explored under different contexts such as eliminating I/O operations to reduce overhead of unnecessary disk I/O access~\cite{Smowton}, removing code duplication in residual programs~\cite{Debois}, implementing inline functions to save function call overheads~\cite{Jones1996}, and instrumenting interpreters to reduce loop-invariant code~\cite{Jones1993}.
-However, to our knowledge, we are the first to propose the evaluation of system-level reliability for program partial evaluations.  
+Since Futamura first proposed the use of compile time partial evaluation in the 1970’s~\cite{Futamura} and it was the first time that the notion of partial evaluation proposed. After that, various scholars started to worked on this topic regarding utilizing partial evaluation to reduce program compiling time overhead and program run time by specialization. 
+~\cite{Smowton} explored different circumstnaces of partial evaluation including eliminating I/O operations to reduce overhead of unnecessary disk I/O access by offline partial evaluation~\cite{Smowton}.
+However, the working process was complicated and still in evaluation stage.
+\cite{Debois} proposed a method to remove code duplication in residual programs by specializing instrumented interpreters and using bisimulation to identify duplicated codes and remove them. However, it can be used in imperative language only.
+~\cite{Jones1996} was the fist to implement partial evaluation to save function call overheads and instrument interpreters to reduce loop-invariant code~\cite{Jones1993}.
+
+Fault tolerance and fault injection have been a widely discussed topic and many previous works have been proposed.
+
+Software system level reliability was discussed by~\cite{Softwarereliability} by presenting an overview of the key reliability modeling approaches and analysis of the respective assumptions. They provided a procedure for fitting the model and illustrate it via analysis of different fault model and ~\cite{Randell} discussed and proposed a method for structuring complex computing systems with system-level fault tolerance technique such as recovery blocks and fault-tolerant interfaces to facilitate the provision of dependable error detection and recovery facilities to cope with errors caused by residual design inadequacies. 
+
+~\cite{Faultinjection} discuss different scenarios of utilizing hardware methods to evaluate low-level errors and high-level software techniques to test high-level mechanisms 
+
+~\cite{luqining} has proposed a LLVM level fault injection tool and performed fault injections by different error categories to quantify their respective error resilience.
+
+~\cite{Weijiesheng} has proposed and validated the difference between high-level and low-level fault injection accuracy and fault resilience with an LLVM based fault injector. 
+
+Although there has been widely research on partial evaluation and fault tolerance respectively, we have not seen the evaluation of system-level fault tolerance analysis based on optimized programs with partial evaluation and to the best of our knowledge, we are the first to propose the evaluation of system-level reliability for program partial evaluations.  
