@@ -1,6 +1,13 @@
 \section{Methodology}
 \label{sec:methodology}
 
+\subsection{Motivating Example}
+Consider the following code snippet.
+The figure on the left shows the unoptimized program, while the figure on the right shows the partial evaluation optimization.
+Notice that the function call to foo2 is replaced with a constant instead.
+Note that the actual transformation is performed at the IR level, not through source code.
+
+\subsection{Approach}
 A number of compiler-level partial evaluation strategies exist.
 We will implement one form of partial evaluation as a LLVM transformation pass.
 Our pass will apply static analysis to convert function calls to constants, by evaluating branch and loop conditions with function inputs at compile time.

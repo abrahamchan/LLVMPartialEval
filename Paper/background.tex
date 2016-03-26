@@ -1,53 +1,53 @@
-\section{Background and Motivating Example}
+\section{Background}
 \label{sec:background}
 
-In this section, we introduce program optimization, partial evaluation and illustrate a functional example of our proposed partial evaluation compiler transformation.
-Program optimization is the process of modifying a software system to make it work more efficiently with lesser hardware resources such as CPU, memory while enables program to run more rapidly.
+In this section, we provide an overview of program optimization, partial evaluation, fault tolerance and the fault model.
 
 \subsection{Program Optimization}
-Program optimization can take place at various levels from top to down starting design level. Good architectural design can greatly influence the overall performance of a program when the programmer can plan ahead of available resources, given goals and expected use.
-Good planning of program algorithms and data structures can also be important because the choice of algorithms and data structures affects more than any other aspect of the program. Data structures are more difficult to change than algorithms because data structure assumption and its performance assumptions are used throughout the program once the program is written. Although we can minimize the negative impact of bad design of algorithm by the use of abstract data types within function definitions, it is still a hard work to do if not planned well ahead of time. 
+Program optimization can take place at various levels of the code generation process.
+Software architectural design can greatly influence the overall performance of a program, especially when the programmer is able to plan ahead in coordination with the available system resources.
+As an example, developers can minimize memory accesses by introducing caching in the software level.
+In practice, however, many developers design software that is agnostic to specific system environments.
+Program optimizations are assumed to be carried out in the latter parts of the code generation process. 
 
-Despite the above two program optimization methods, compiler optimization has been recognized as an effective way to optimize program when the overall program has been well built and optimization needs to be implemented at later stage. 
-Techniques used in optimization can be broken up among various scopes to affect multi-level components of a program starting from a single statement to a code block. 
-Optimizations aiming at different code structure and program scopes can have various types of optimizations such as loop optimization, data-flow optimization, SSA-based optimization, code generator optimization, functional language optimization and interprocedural optimization. 
-
-Although their exists various ways to optimize compiler to do program optimization, we should choose certain methods which can be specifically used to address certain kinds of program optimization by specialization. 
+Compiler optimizations have been recognized as an effective way to optimize programs without impacting the software development workflow.
+Techniques used in optimization can target multi-level components of a program starting from a single statement to a code block. 
+Optimizations aiming at different code structures and program scopes include loop optimizations, data-flow optimizations, SSA-based optimizations, code generator optimizations, functional language optimizations and inter-procedural optimizations. While optimizations should generally improve a program's performance, it should not affect the correctness of the program.
 
 \subsection{Partial Evaluation}
-Partial Evaluation is a powerful and general optimization technique and has wide application in various fields such as scientific computing, domain-specific language engineering and generic programming.
-It provides a unifying paradigm for a large number of work in program optimization compiling interpretation and the generation of automatic pgrogram generators.
-Partial Evaluation is an optimization algorithm which, when given a program and some input data, can produce a specialized program or so-called residual program because running the program with the remaining input data will produce the same result comparing to the original program and performance will also be improved.
-It can aslo be called program specialization because much partial evaluation work to date has concerned automatic compiler generation from an interpretive definition of a programming language.
-In general, a partial evaluation produces a specialized versions of program where some arguments are statically known~\cite{Jones1996} and it can be classified into two categories: online and offline specialization. offline specialization menas that it program begins with a binding-time analysis that aims to place appropriate annotations on the program before reading the static input and the annotations of interpretation can be specialized as follows:
+Partial evaluation, also known as program specialization, is an optimization algorithm which, when given a program and some input data, can produce a specialized program. The specialized program will produce the same result as the original program, while gaining improved performance. Suppose $P$ is a program, and $P'$ is its specialized program. Then, $P'$ is a specialized program of $P$ if and only if:
 \begin{enumerate}
-\item Evaluate all nonunderlined expressions
-\item Unfold at specialization time all non-underlined function calls
-\item Generate residual code for all under-lined expressions
-\item Generate residual function calls for all underlined function calls
+\item Every instance of $P'$ is also an instance of $P$.
+\item There exists instances of $P$ that are not instances of $P'$.
 \end{enumerate}
-Online specialization takes a different approach comparing to offline specialziation by computing program parts as early as possible with current available information 
+
+Partial evaluations are sometimes called program specializations since much partial evaluation work to date has concerned automatic compiler generation from an interpretive definition of a programming language.
+In general, a partial evaluation produces a specialized version of a program where some arguments are statically known~\cite{Jones1996}. 
+Partial evaluation techniques can be classified into two categories: online and offline specialization.
+Offline specialization means that the program begins with a binding-time analysis that aims to place appropriate annotations on the program before reading the static input.
+Online specialization undertakes program reduction decisions during the transformation phase. In this paper, we focus on an online specialization technique, by assuming no programmer annotations. 
+
+Partial evaluation is a powerful and general optimization technique and has wide applications in various fields such as scientific computing, domain-specific language engineering and generic programming.
+It provides a unifying paradigm in compiler interpretors and automatic program generators.
 
 \subsection{Fault Tolerance}
-Given the increasing complexsity of software system in both scientific and industrial fields, program-level dependability issues have become a widely-discussed topic that many reserachers and industrial engineerings are facing. Software level fault tolerance is the property of the system where it can continue to operate properly in the event of a failure caused by one or multiple faults.
+Given the increasing complexity and importance of software systems in both scientific and industrial fields, program-level dependability has become a significant topic of interest.
+Fault tolerance is the property of the system where it can continue to operate properly in the event of a failure caused by one or more faults.
 
-Fault tolerant software is becoming increasing important in many application fields which requires high software reliability such as industrial control, nuclear plant control software where even a single minor error will cause catastrophic result.
-A good fault-tolerance design enables the system to operate according to its original intended operation, even when severe faults occurred.
-Sometimes the overal performance degrade minorlly, but the system still works as planned. 
+Fault tolerant software is becoming increasing important in many application fields, which requires high software reliability such as aviation control systems where even a single error can cause catastrophic results.
+To counteract against such risks, resilient software systems deploy various levels of redundancy.
+Examples include recovery blocks, N-version programming and self-checking software.
+While these measures improve software fault tolerance, they also incur a performance penalty with larger execution codes.
+Since programs typically undergo compile-time optimizations, there is a need to understand the impact of different compiler optimizations on software reliability.
 
-Here we talk about the error resilience of a program as its ability to withstand faults not only from hardware level but also software level faults without leading to a crash, hang or incorrect output. 
+In this paper, we explore the impact on error resilience of program partial evaluations. We refer to the error resilience of a program as its ability to withstand faults not only arising from hardware but also software faults without leading to a crash, hang or incorrect output. 
 
-Fault injection is one of the widely used techniques to evalualte the error resilience of a program because fault injection procedure intorduce faults in a systematic, controlled manner and the system behavior through the entire process can be monitored throughout the injection phase. System level results can be obtained by running a large amount of fault injection tests to provide people with statistical insights on the error resilience property as well as error propagation based on different types of injected faults.
+\subsection{Fault Model}
+
+Fault injection is one of the widely used techniques to evaluate the error resilience of a program because fault injection procedure introduce faults in a systematic, controlled manner and the system behaviour through the entire process can be monitored throughout the injection phase. System level results can be obtained by running a large amount of fault injection tests to provide people with statistical insights on the error resilience property as well as error propagation based on different types of injected faults.
 
 In this paper, we are primarily interested in evaluating the resilience of applications using Software Implemented Fault Injection(SWiFI) and we inject faults into program's data or instruction level to test the software error resilience.
 
-\subsection{LLVM}
-LLVM is a compiler infrastructure for program analysis and optimization. It is consisted of front-end and backend to translate source code into intermeidate code where optimization can be implemented to optimzie the program and then translate the IR code into machine code for various hardware platforms such as X86, ARM etc. IR code can be optimized by user through writing optimization pass or transformation pass.
-One advantage of LLVM IR intermediate code is that it is a typed language, which means that source code details can be easily mapped into IR code for comparison because source code variable, function names are perserved during the front-end compiling process. 
-Furthremore, LLVM provides support for program analysis and transformation, which makes fault injection at this level easy to observe the result.
 
-\subsection{Motivating Example}
-Consider the following code snippet.
-The figure on the left shows the unoptimized program, while the figure on the right shows the partial evaluation optimization.
-Notice that the function call to foo2 is replaced with a constant instead.
-Note that the actual transformation is performed at the IR level, not through source code.
+
+
