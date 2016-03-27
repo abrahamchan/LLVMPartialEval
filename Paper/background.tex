@@ -1,7 +1,7 @@
 \section{Background}
 \label{sec:background}
 
-In this section, we provide an overview of program optimization, partial evaluation, fault tolerance and the fault model.
+In this section, we provide an overview of program optimization, partial evaluation, fault tolerance and the fault model considered in this paper.
 
 \subsection{Program Optimization}
 Program optimization can take place at various levels of the code generation process.
@@ -34,20 +34,30 @@ It provides a unifying paradigm in compiler interpretors and automatic program g
 Given the increasing complexity and importance of software systems in both scientific and industrial fields, program-level dependability has become a significant topic of interest.
 Fault tolerance is the property of the system where it can continue to operate properly in the event of a failure caused by one or more faults.
 
-Fault tolerant software is becoming increasing important in many application fields, which requires high software reliability such as aviation control systems where even a single error can cause catastrophic results.
+Fault tolerant software is becoming increasing important in many application fields, which require high software reliability such as aviation control systems where even a single error can cause catastrophic results.
 To counteract against such risks, resilient software systems deploy various levels of redundancy.
 Examples include recovery blocks, N-version programming and self-checking software.
 While these measures improve software fault tolerance, they also incur a performance penalty with larger execution codes.
 Since programs typically undergo compile-time optimizations, there is a need to understand the impact of different compiler optimizations on software reliability.
 
-In this paper, we explore the impact on error resilience of program partial evaluations. We refer to the error resilience of a program as its ability to withstand faults not only arising from hardware but also software faults without leading to a crash, hang or incorrect output. 
+In this paper, we explore the impact on error resilience of program partial evaluations. We refer to the error resilience of a program as its ability to withstand faults, not only arising from hardware, but also software faults without violating program specifications. 
 
 \subsection{Fault Model}
 
-Fault injection is one of the widely used techniques to evaluate the error resilience of a program because fault injection procedure introduce faults in a systematic, controlled manner and the system behaviour through the entire process can be monitored throughout the injection phase. System level results can be obtained by running a large amount of fault injection tests to provide people with statistical insights on the error resilience property as well as error propagation based on different types of injected faults.
+In this study, we refer to faults as the defects in the system, errors as observable deviations from the original system behaviour, and failures as violations of design specifications.
 
-In this paper, we are primarily interested in evaluating the resilience of applications using Software Implemented Fault Injection(SWiFI) and we inject faults into program's data or instruction level to test the software error resilience.
+In our fault model, we consider transient hardware and software faults, and permanent hardware defects.
+We do not consider permanent software faults that occur as a result of implementation mistakes.
+Transient hardware faults include cosmic alpha particle strikes on processor chips that cause a single bit to be flipped.
+Permanent hardware faults encompass irrecoverable chip failures, leading to a stuck at bit fault.
+Transient software faults include data and function call corruptions. 
+We assume that these faults occur during program execution, either in the hardware or software of the system. 
 
+Errors are defined as deviations between the golden and faulty runs of a program.
+Typically, an instruction/data trace is taken over the course of program execution. 
+These traces are compared and conflicts between traces are considered errors.
 
+We consider faulty programs to fail if program execution results in silent data corruptions (SDC's), crashes or hangs. For the purpose of this study, we will ignore benign faults - faults that do not lead to a failure.
 
-
+To simulate this prescribed fault model, we perform software implemented fault injection (SwiFi) on the benchmarks.  
+Fault injection is one of the commonly deployed techniques to evaluate the error resilience of a program by introducing faults in a systematic manner and enabling monitoring of the system throughout the injection phase.
