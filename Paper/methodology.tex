@@ -7,12 +7,15 @@ The figure on the left shows the unoptimized program, while the figure on the ri
 Notice that the function call to foo2 is replaced with a constant instead.
 Note that the actual transformation is performed at the IR level, not through source code.
 
+
 \subsection{Approach}
-A number of compiler-level partial evaluation strategies exist.
-We will implement one form of partial evaluation as a LLVM transformation pass.
-Our pass will apply static analysis to convert function calls to constants, by evaluating branch and loop conditions with function inputs at compile time.
+As for our approach, we will first apply two partial evaluation techniques to C/C++ programs and test improved performance by measuring run time difference and compare IR level source code different. Then we will apply LLFI, a LLVM-based fault injector to inject selected models of faults to the partially evaluated programs and run selected  benchmarks to evaluate the error resilience between the original program and the partially-evaluated program.   
+We will implement the partial evaluation programs as LLVM transformation pass because as it is stated in previous session, LLVM IR code is a typed language, which enables us to backtrack the difference between source code and IR code. 
+To evaluate the C source code and optimized IR code, it would be convenient for us to find the optimized trace in LLVM IR code with LLVM optimization pass.
+For our first optimization pass, we will apply static analysis to convert function calls to constants, by evaluating branch and loop conditions with function inputs at compile time. 
 This simplified approach was presented by Fujita’s work on partial evaluations~\cite{Fujita}.
-Programs in C/C++ will be compiled to LLVM IR using the Clang front-end and the partial evaluation optimization pass will be applied subsequently on the generated IR.
+Another optimization pass we will apply is to convert certain function into inline function, which will improve program run-time performance by avoiding to allocate new stacks and heaps for ordinary function calls. 
+We will use Clang for front-end compiling process to compile the source code into LLVM IR and apply the above two partial evaluation into the IR. 
 Then, we will compile the optimized program to an executable, in order to dynamically confirm program correctness.
-After program correctness is verified, we will measure the number of IR instructions reduced as a result of the partial evaluation optimization.
-Finally, we will evaluate and compare the error resilience of the program’s partial evaluation with its original unoptimized implementation through a series of fault injection experiments.
+After program correctness is verified, we will measure the number of IR instructions reduced as a result of the partial evaluation optimization because instruction reduction not only reduce resource allocation but also reduce running time. 
+Finally, we will evaluate and compare the error resilience of the program's partial evaluation with its original unoptimized implementation through a series of fault injection experiments.
