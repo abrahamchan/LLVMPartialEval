@@ -1,21 +1,120 @@
 \section{Methodology}
 \label{sec:methodology}
 
-\subsection{Motivating Example}
-Consider the following code snippet.
-The figure on the left shows the unoptimized program, while the figure on the right shows the partial evaluation optimization.
-Notice that the function call to foo2 is replaced with a constant instead.
-Note that the actual transformation is performed at the IR level, not through source code.
+In this section, we first provide a functional example of a partial evaluation optimization. Then, we describe our implementation of partial evaluation in LLVM.
 
+\subsection{Motivating Example}
+\label{sec:motivatingexample}
+Partial evaluation aims to specialize programs with respect to known inputs.
+A number of partial evaluation techniques exist.
+One variant of partial evaluation involves substituting function calls with constants, by evaluating branch and loop conditions with known program inputs.
+This simplified approach was presented by Fujita’s work on partial evaluations~\cite{Fujita}.
+If function calls can be replaced with constants, this reduces executable code, removes interactions with the call stack and avoids handling function return addresses.
+This approach can also be implemented online at compile time.
+
+Consider the following program in Figure~\ref{fig:original_sum}.
+This program computes the sum of the arithmetic series, ending at the number $N$.
+
+\begin{figure}[htbp]\
+\begin{Verbatim}[frame=single,fontsize={\scriptsize},numbers=left,numbersep=5pt,xleftmargin=10pt]
+int sum(int N)
+{
+  int i;
+  int s = 0;
+  for(i = 1; i <= N; ++i) {
+    s += i;
+  }
+  return s;
+}
+
+int sum2(int N)
+{
+  return N*(N+1)/2;
+}
+
+int main(int argc, char **argv)
+{
+  int N = atoi(argv[1]);
+  int gold = sum2(N);
+  int s = sum(N);
+
+  if(s != gold) {
+    return 2;
+  }
+
+  printf("Success: sum(%d) = %d\n", N, s);
+  return 0;
+}
+\end{Verbatim}
+\caption{Original implementation of the sum application.}
+\label{fig:original_sum}
+\end{figure}
+
+The program accepts one argument, $N$ as its input.
+Suppose the input to this program is known such that $N = 6$. 
+This can be the case for repetitive computations. 
+
+First, line 18 can be substituted with $N = 6$.
+If N is a constant, then the function call to \inlinecode{sum2()} at line 19 can be replaced with \inlinecode{gold = 21}.
+This is obtained by evaluating \inlinecode{sum2()} with respect to the known value of $N$. 
+Similarly, the function call to \inlinecode{sum()} at line 20 can be replaced with \inlinecode{s = 21}.
+Furthermore, the predicate block beginning on line 22 can be eliminated since $s = gold = 21$.
+The resulting partial evaluation is shown in Figure~\ref{fig:pe_sum}.
+Given the input to the this program, we were able to remove 2 function calls, and a predicate block.
+
+\begin{figure}[htbp]\
+\begin{Verbatim}[frame=single,fontsize={\scriptsize},numbers=left,numbersep=5pt,xleftmargin=10pt]
+int main(int argc, char **argv)
+{
+  int N = 6;
+  int s = 21;
+
+  printf("Success: sum(%d) = %d\n", N, s);
+  return 0;
+}
+\end{Verbatim}
+\caption{Partial evaluation of the sum application for N=6.}
+\label{fig:pe_sum}
+\end{figure}
 
 \subsection{Approach}
-As for our approach, we will first apply two partial evaluation techniques to C/C++ programs and test improved performance by measuring run time difference and compare IR level source code different. Then we will apply LLFI, a LLVM-based fault injector to inject selected models of faults to the partially evaluated programs and run selected  benchmarks to evaluate the error resilience between the original program and the partially-evaluated program.   
-We will implement the partial evaluation programs as LLVM transformation pass because as it is stated in previous session, LLVM IR code is a typed language, which enables us to backtrack the difference between source code and IR code. 
-To evaluate the C source code and optimized IR code, it would be convenient for us to find the optimized trace in LLVM IR code with LLVM optimization pass.
-For our first optimization pass, we will apply static analysis to convert function calls to constants, by evaluating branch and loop conditions with function inputs at compile time. 
-This simplified approach was presented by Fujita’s work on partial evaluations~\cite{Fujita}.
-Another optimization pass we will apply is to convert certain function into inline function, which will improve program run-time performance by avoiding to allocate new stacks and heaps for ordinary function calls. 
-We will use Clang for front-end compiling process to compile the source code into LLVM IR and apply the above two partial evaluation into the IR. 
-Then, we will compile the optimized program to an executable, in order to dynamically confirm program correctness.
-After program correctness is verified, we will measure the number of IR instructions reduced as a result of the partial evaluation optimization because instruction reduction not only reduce resource allocation but also reduce running time. 
-Finally, we will evaluate and compare the error resilience of the program's partial evaluation with its original unoptimized implementation through a series of fault injection experiments.
+
+We implement the partial evaluation optimization as a transformation module pass in LLVM.
+C/C++ programs are compiled to LLVM IR using the Clang front-end and the partial evaluation optimization pass is applied subsequently on the generated IR.
+A system diagram of our partial evaluation optimizer is shown in Figure~\ref{fig:pe_diagram}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[keepaspectratio=true,width=\columnwidth]{PE_Diagram}
+  \caption{Flow Chart of Online Partial Evaluation Optimization}
+  \label{fig:pe_diagram}
+\end{figure}
+
+As observed in Section~\ref{sec:motivatingexample}, statically known program inputs can be leveraged towards reducing execution instructions. 
+Hence, the optimization pass commences by substituting program variables with program inputs.
+After variables are substituted with inputs, each function call is statically evaluated to eliminate branch conditions and loops.
+Successfully reduced function calls can be safely converted to constants, while nested function calls will require the process to be repeated iteratively. 
+Upon completion of this step, functions can be selectively inlined into the program.
+Inlining eliminates the function call and integrates the remaining function instructions directly with the main program.
+Instead of inlining every function in the program, we only inline functions that have been successfully reduced to constant operations.
+Finally, any outstanding redundant instructions and dead code is eliminated.
+
+Adhering to the design principle, \textit{Separation of Concerns}, we opted to implement the minimal features required and allow subsequent passes to perform the rest of the optimization.
+Since the default build of LLVM provides transformation passes to carry out constant propagation, loop unrolling, instruction combining and dead code elimination, we only need to develop the features of input substitution (1) and selective inlining (2) as marked in Figure~\ref{fig:pe_diagram}.
+
+\subsubsection{Input Substitution}
+
+To perform input substitution, the optimization pass reads the program inputs from a user-defined input file. 
+This is specified through a command line argument to the LLVM pass. 
+The program inputs are substituted into variables referencing either the $argv$ command line argument array or $fread()$ instructions.
+Candidate variables for input substitution include both local and global variables.
+
+\subsubsection{Selective Inlining}
+
+By default, LLVM provides an inlining transformation pass.
+This default pass, however, inlines every function in the program.
+In contrast, our optimization pass only inlines functions with constant instructions.
+For example, if we encounter an instruction such as \inlinecode{\%x = add i32 1, \%y} in the function and \inlinecode{\%y} is not known, we will not inline the function.
+As a result, our optimization pass will only eliminate function calls that are fully specialized to the program inputs.
+While selective inlining does not alter the program behaviour, the program is able to retain function calls in unspecialized regions of the code.
+It is important to retain such function calls to avoid erroneous partial evaluations, owing to poor variable visibility.
