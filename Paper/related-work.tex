@@ -1,20 +1,25 @@
 \section{Related Work}
 \label{sec:related-work}
 
-Since Futamura first proposed the use of compile time partial evaluation in the 1970’s~\cite{Futamura} and it was the first time that the notion of partial evaluation proposed. After that, various scholars started to worked on this topic regarding utilizing partial evaluation to reduce program compiling time overhead and program run time by specialization. 
-~\cite{Smowton} explored different circumstnaces of partial evaluation including eliminating I/O operations to reduce overhead of unnecessary disk I/O access by offline partial evaluation~\cite{Smowton}.
-However, the working process was complicated and still in evaluation stage.
-\cite{Debois} proposed a method to remove code duplication in residual programs by specializing instrumented interpreters and using bisimulation to identify duplicated codes and remove them. However, it can be used in imperative language only.
-~\cite{Jones1996} was the fist to implement partial evaluation to save function call overheads and instrument interpreters to reduce loop-invariant code~\cite{Jones1993}.
+Since Futamura~\cite{Futamura} first proposed the use of compile time partial evaluation in the 1970’s, various studies have explored and proposed different approaches to partial evaluation, with the goal of reducing program performance overhead through specialization. 
+However, we find that these approaches differ significantly in maturity and effectiveness.
+Smowton~\cite{Smowton} proposed one variant of partial evaluation by eliminating I/O operations to reduce the overhead caused by unnecessary disk I/O access. In his work, offline partial evaluation is used.
+Nevertheless, the working process was complicated and remained a prototype.
+Debois~\cite{Debois} proposed a method to remove code duplication in residual programs by specializing instrumented interpreters and using bisimulation to identify duplicated codes and remove them.
+However, its use is limited to imperative languages only.
+Jones~\cite{Jones1996} was the first to present a partial evaluation approach that specifically targets function calls and loop-invariant code.
+In contrast to all of these prior works, Fujita~\cite{Fujita} simplified the problem of partial evaluation and presented a general approach - replace function arguments with constant values and apply traditional compiler passes. 
 
-Fault tolerance and fault injection have been a widely discussed topic and many previous works have been proposed.
+Software fault tolerance has been a widely studied topic.
+Software system level reliability was discussed by Goel~\cite{Softwarereliability} by presenting an overview of the key reliability modelling approaches and analysis of the respective assumptions.
+His work provided a procedure for fitting the fault model and illustrated it through an analysis of the models.
+Subsequently, Randell~\cite{Randell} discussed and proposed a method for structuring complex computing systems with system-level fault tolerance techniques such as recovery blocks and fault-tolerant interfaces to facilitate the provision of error detection and recovery facilities. 
+At the compiler level, SWIFT~\cite{SWIFT} implements software fault tolerance by instrumenting control flow checking mechanisms into programs.
 
-Software system level reliability was discussed by~\cite{Softwarereliability} by presenting an overview of the key reliability modeling approaches and analysis of the respective assumptions. They provided a procedure for fitting the model and illustrate it via analysis of different fault model and ~\cite{Randell} discussed and proposed a method for structuring complex computing systems with system-level fault tolerance technique such as recovery blocks and fault-tolerant interfaces to facilitate the provision of dependable error detection and recovery facilities to cope with errors caused by residual design inadequacies. 
+More recently, fault injections have been used to measure the error resilience of programs.
+Specifically, work in this area have used software implemented fault injections to achieve this goal.
+Lu et al.~\cite{LLFI} have presented a LLVM-based fault injection tool, LLFI, and conducted runtime fault injections of different fault categories to quantify a program's error resilience.
+Duraes et al.~\cite{Duraes2006} presented G-SWFIT, which also performs runtime fault injections on program binaries.
+We have leveraged the work in this area to carry out a fault injection assessment of program error resilience. 
 
-~\cite{Faultinjection} discuss different scenarios of utilizing hardware methods to evaluate low-level errors and high-level software techniques to test high-level mechanisms 
-
-~\cite{luqining} has proposed a LLVM level fault injection tool and performed fault injections by different error categories to quantify their respective error resilience.
-
-~\cite{Weijiesheng} has proposed and validated the difference between high-level and low-level fault injection accuracy and fault resilience with an LLVM based fault injector. 
-
-Although there has been widely research on partial evaluation and fault tolerance respectively, we have not seen the evaluation of system-level fault tolerance analysis based on optimized programs with partial evaluation and to the best of our knowledge, we are the first to propose the evaluation of system-level reliability for program partial evaluations.  
+Although there has been extensive research on partial evaluation and software fault tolerance respectively, we have not yet seen the evaluation of system-level fault tolerance based on programs' partial evaluations.
