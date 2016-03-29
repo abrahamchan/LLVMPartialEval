@@ -4,6 +4,7 @@
 In this section, we provide an overview of program optimization, partial evaluation, fault tolerance and the fault model considered in this paper.
 
 \subsection{Program Optimization}
+\label{sec:program_opt}
 Program optimization can take place at various levels of the code generation process.
 Software architectural design can greatly influence the overall performance of a program, especially when the programmer is able to plan ahead in coordination with the available system resources.
 As an example, developers can minimize memory accesses by introducing caching in the software level.
@@ -15,6 +16,7 @@ Techniques used in optimization can target multi-level components of a program s
 Optimizations aiming at different code structures and program scopes include loop optimizations, data-flow optimizations, SSA-based optimizations, code generator optimizations, functional language optimizations and inter-procedural optimizations. While optimizations should generally improve a program's performance, it should not affect the correctness of the program.
 
 \subsection{Partial Evaluation}
+\label{sec:partial_evaluation}
 Partial evaluation, also known as program specialization, is an optimization algorithm which, when given a program and some input data, can produce a specialized program. The specialized program will produce the same result as the original program, while gaining improved performance. Suppose $P$ is a program, and $P'$ is its specialized program. Then, $P'$ is a specialized program of $P$ if and only if:
 \begin{enumerate}
 \item Every instance of $P'$ is also an instance of $P$.
@@ -31,6 +33,7 @@ Partial evaluation is a powerful and general optimization technique and has wide
 It provides a unifying paradigm in compiler interpretors and automatic program generators.
 
 \subsection{Fault Tolerance}
+\label{sec:fault_tolerance}
 Given the increasing complexity and importance of software systems in both scientific and industrial fields, program-level dependability has become a significant topic of interest.
 Fault tolerance is the property of the system where it can continue to operate properly in the event of a failure caused by one or more faults.
 
@@ -43,6 +46,7 @@ Since programs typically undergo compile-time optimizations, there is a need to 
 In this paper, we explore the impact on error resilience of program partial evaluations. We refer to the error resilience of a program as its ability to withstand faults, not only arising from hardware, but also software faults without violating program specifications. 
 
 \subsection{Fault Model}
+\label{sec:fault_model}
 
 In this study, we refer to faults as the defects in the system, errors as observable deviations from the original system behaviour, and failures as violations of design specifications.
 
