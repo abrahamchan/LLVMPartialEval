@@ -46,7 +46,7 @@ int main(int argc, char **argv)
   return 0;
 }
 \end{Verbatim}
-\caption{Original implementation of the sum application.}
+\caption{Original implementation of the sum program.}
 \label{fig:original_sum}
 \end{figure}
 
@@ -56,7 +56,7 @@ This can be the case for repetitive computations.
 
 First, line 18 can be substituted with $N = 6$.
 If N is a constant, then the function call to \inlinecode{sum2()} at line 19 can be replaced with \inlinecode{gold = 21}.
-This is obtained by evaluating \inlinecode{sum2()} with respect to the known value of $N$. 
+This is obtained by evaluating \inlinecode{sum2()} with respect to the known value of $N$, which is $1 + 2 + ... + 6 = 21$ in this case. 
 Similarly, the function call to \inlinecode{sum()} at line 20 can be replaced with \inlinecode{s = 21}.
 Furthermore, the predicate block beginning on line 22 can be eliminated since $s = gold = 21$.
 The resulting partial evaluation is shown in Figure~\ref{fig:pe_sum}.
@@ -73,14 +73,14 @@ int main(int argc, char **argv)
   return 0;
 }
 \end{Verbatim}
-\caption{Partial evaluation of the sum application for N=6.}
+\caption{Partial evaluation of the sum program for N=6.}
 \label{fig:pe_sum}
 \end{figure}
 
 \subsection{Approach}
 
 We implement the partial evaluation optimization as a transformation module pass in LLVM.
-C/C++ programs are compiled to LLVM IR using the Clang front-end and the partial evaluation optimization pass is applied subsequently on the generated IR.
+C/C++ programs are compiled to LLVM intermediate representation (IR) using the Clang front-end and the partial evaluation optimization pass is applied subsequently on the generated IR.
 
 \begin{figure}[htbp]
   \centering
@@ -107,16 +107,84 @@ Since the default build of LLVM provides transformation passes to carry out cons
 
 To perform input substitution, the optimization pass reads the program inputs from a user-defined input file. 
 This is specified through a command line argument to the LLVM pass. 
-The program inputs are substituted into variables referencing either the $argv$ command line argument array or $fread()$ instructions.
+The program inputs are substituted into variables referencing either the \inlinecode{argv} command line argument array or \inlinecode{fread()} instructions.
 Candidate variables for input substitution include both local and global variables.
 
+We provide an example of input substitution using the sum program.
+Figure~\ref{fig:original_ir} displays the LLVM IR of the original, unoptimized sum program.
+
+\begin{figure}[htbp]\
+\begin{Verbatim}[frame=single,fontsize={\scriptsize},numbers=left,numbersep=5pt,xleftmargin=10pt]
+define i32 @main(i32 %argc, i8** %argv) #0 {
+...
+  %11 = load i8**, i8*** %3, align 8
+  %12 = getelementptr inbounds i8*, i8** %11, i64 1
+  %13 = load i8*, i8** %12, align 8
+  %14 = call i32 @atoi(i8* %13) #3
+  store i32 %14, i32* %N, align 4
+  %15 = load i32, i32* %N, align 4
+  %16 = call i32 @sum2(i32 %15)
+  store i32 %16, i32* %gold, align 4
+  %17 = load i32, i32* %N, align 4
+  %18 = call i32 @sum(i32 %17)
+  store i32 %18, i32* %s, align 4
+  %19 = load i32, i32* %s, align 4
+  %20 = load i32, i32* %gold, align 4
+  %21 = icmp ne i32 %19, %20
+...
+}
+\end{Verbatim}
+\caption{Original IR of the sum program.}
+\label{fig:original_ir}
+\end{figure}
+
+Knowing that the variable N stores the input value 6, all instructions referring to \%N are replaced with 6.
+The result of this optimization is shown in Figure~\ref{fig:input_sub_ir}. 
+
+\begin{figure}[htbp]\
+\begin{Verbatim}[frame=single,fontsize={\scriptsize},numbers=left,numbersep=5pt,xleftmargin=10pt]
+define i32 @main(i32 %argc, i8** %argv) #0 {
+...
+  store i32 6, i32* %N, align 4
+  %9 = call i32 @sum2(i32 6)
+  store i32 %9, i32* %gold, align 4
+  %10 = call i32 @sum(i32 6)
+  store i32 %10, i32* %s, align 4
+  %11 = load i32, i32* %gold, align 4
+  %12 = icmp eq i32 %10, %11
+...
+}
+\end{Verbatim}
+\caption{Input substitution on the sum program, $N=6$.}
+\label{fig:input_sub_ir}
+\end{figure}
+
 \bigbreak
+
 \subsubsection{Selective Inlining}
 
-By default, LLVM provides an inlining transformation pass.
+LLVM provides a default function inlining transformation pass.
 This default pass, however, inlines every function in the program.
 In contrast, our optimization pass only inlines functions with constant instructions.
 For example, if we encounter an instruction such as \inlinecode{\%x = add i32 1, \%y} in the function and \inlinecode{\%y} is not known, we will not inline the function.
 As a result, our optimization pass will only eliminate function calls that are fully specialized to the program inputs.
 While selective inlining does not alter the program behaviour, the program is able to retain function calls in unspecialized regions of the code.
 It is important to retain such function calls to avoid erroneous partial evaluations, owing to poor variable visibility.
+
+An example of selective inlining is shown in Figure~\ref{fig:inlining_ir}.
+This example builds on top of the optimized IR, previously shown in Figure~\ref{fig:input_sub_ir}.
+In this example, the function calls to \inlinecode{sum2()} and \inlinecode{sum()} are successfully replaced with constants.
+
+\begin{figure}[htbp]\
+\begin{Verbatim}[frame=single,fontsize={\scriptsize},numbers=left,numbersep=5pt,xleftmargin=10pt]
+define i32 @main(i32 %argc, i8** %argv) #0 {
+...
+  store i32 6, i32* %N, align 4
+  store i32 21, i32* %s, align 4
+  %5 = icmp eq i32 %N, %s
+...
+}
+\end{Verbatim}
+\caption{Selective inlining on the sum program, $N=6$.}
+\label{fig:inlining_ir}
+\end{figure}
