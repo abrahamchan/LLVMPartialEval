@@ -25,9 +25,11 @@ We consider a program's outcome to be faulty if the program encounters one of th
 \item Crashes/Hangs
 \end{itemize}
 
+\bigbreak
 
 We select five C/C++ benchmarks drawn from the Parboil~\cite{Parboil}, and SPEC CPU2006 benchmarks~\cite{SPEC} respectively.
-The partial evaluation LLVM pass is executed on the five benchmarks.
+These benchmarks broadly represent a range of scientific computing applications, with easily configurable program inputs and deterministic outputs.
+The partial evaluation LLVM pass is executed on the five benchmarks, using the default input files for each benchmark.
 Then, 1000 fault injections of each fault type is conducted on the partial evaluations.
 The fault injections are repeated again with the original unoptimized implementations (baseline).
 The statistics of the fault outcomes are collected and compared to their baselines. 
@@ -98,3 +100,4 @@ The degree of specialization provides an approximate measure of the extent of co
 
 \subsection{Results}
 \label{sec:results}
+Forthcoming.

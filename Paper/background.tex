@@ -17,20 +17,23 @@ Optimizations aiming at different code structures and program scopes include loo
 
 \subsection{Partial Evaluation}
 \label{sec:partial_evaluation}
-Partial evaluation, also known as program specialization, is an optimization algorithm which, when given a program and some input data, can produce a specialized program. The specialized program will produce the same result as the original program, while gaining improved performance. Suppose $P$ is a program, and $P'$ is its specialized program. Then, $P'$ is a specialized program of $P$ if and only if:
+Partial evaluation, also known as program specialization, is an optimization algorithm which, when given a program and some input data, can produce a specialized program. The specialized program will produce the same result as the original program, while gaining improved performance. Suppose $P$ is a program, and $P'$ is its specialized program. An instance is a program execution with a particular set of inputs. Then, $P'$ is a specialized program of $P$ if and only if:
 \begin{enumerate}
 \item Every instance of $P'$ is also an instance of $P$.
 \item There exists instances of $P$ that are not instances of $P'$.
 \end{enumerate}
 
+\bigbreak
+
 Partial evaluations are sometimes called program specializations since much partial evaluation work to date has concerned automatic compiler generation from an interpretive definition of a programming language.
 In general, a partial evaluation produces a specialized version of a program where some arguments are statically known~\cite{Jones1996}. 
+
 Partial evaluation techniques can be classified into two categories: online and offline specialization.
 Offline specialization means that the program begins with a binding-time analysis that aims to place appropriate annotations on the program before reading the static input.
-Online specialization undertakes program reduction decisions during the transformation phase. In this paper, we focus on an online specialization technique, by assuming no programmer annotations. 
+Online specialization undertakes program reduction decisions during the transformation phase. In this paper, we focus on online specialization, by assuming no programmer annotations. 
 
 Partial evaluation is a powerful and general optimization technique and has wide applications in various fields such as scientific computing, domain-specific language engineering and generic programming.
-It provides a unifying paradigm in compiler interpretors and automatic program generators.
+It provides a unifying paradigm in compiler interpreters and automatic program generators.
 
 \subsection{Fault Tolerance}
 \label{sec:fault_tolerance}
@@ -38,12 +41,12 @@ Given the increasing complexity and importance of software systems in both scien
 Fault tolerance is the property of the system where it can continue to operate properly in the event of a failure caused by one or more faults.
 
 Fault tolerant software is becoming increasing important in many application fields, which require high software reliability such as aviation control systems where even a single error can cause catastrophic results.
-To counteract against such risks, resilient software systems deploy various levels of redundancy.
+To counteract against such risks, resilient software systems deploy various kinds of redundancy.
 Examples include recovery blocks, N-version programming and self-checking software.
 While these measures improve software fault tolerance, they also incur a performance penalty with larger execution codes.
 Since programs typically undergo compile-time optimizations, there is a need to understand the impact of different compiler optimizations on software reliability.
 
-In this paper, we explore the impact on error resilience of program partial evaluations. We refer to the error resilience of a program as its ability to withstand faults, not only arising from hardware, but also software faults without violating program specifications. 
+In this paper, we explore the error resilience of program partial evaluations. We refer to the error resilience of a program as its ability to withstand faults, not only arising from hardware, but also software faults without violating program specifications. 
 
 \subsection{Fault Model}
 \label{sec:fault_model}
@@ -52,6 +55,7 @@ In this study, we refer to faults as the defects in the system, errors as observ
 
 In our fault model, we consider transient hardware and software faults, and permanent hardware defects.
 We do not consider permanent software faults that occur as a result of implementation mistakes.
+We focus on faults that are outside the direct control of programmers.
 Transient hardware faults include cosmic alpha particle strikes on processor chips that cause a single bit to be flipped.
 Permanent hardware faults encompass irrecoverable chip failures, leading to a stuck at bit fault.
 Transient software faults include data and function call corruptions. 
@@ -63,5 +67,5 @@ These traces are compared and conflicts between traces are considered errors.
 
 We consider faulty programs to fail if program execution results in silent data corruptions (SDC's), crashes or hangs. For the purpose of this study, we will ignore benign faults - faults that do not lead to a failure.
 
-To simulate this prescribed fault model, we perform software implemented fault injection (SwiFi) on the benchmarks.  
+To simulate this prescribed fault model, we perform software implemented fault injection (SWIFI) on the benchmarks.  
 Fault injection is one of the commonly deployed techniques to evaluate the error resilience of a program by introducing faults in a systematic manner and enabling monitoring of the system throughout the injection phase.

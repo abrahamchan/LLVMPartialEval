@@ -10,7 +10,7 @@ The program space can be effectively reduced to its minimal form required to yie
 
 Fault tolerance is an important component in many mission-critical systems that are expected to operate under extreme conditions~\cite{Somani}.
 Faulty conditions can include physical phenomena such as alpha particle strikes and chip failures.
-It can also include transient software bugs such as function call corruptions and pointer corruptions. 
+It can also include transient software faults such as function call corruptions and pointer corruptions. 
 By definition, partial evaluations must guarantee program correctness.
 However, it is not clear how partial evaluations impact a program's resilience to faults.
 
@@ -25,8 +25,12 @@ In summary, this paper includes the following contributions:
 \item Evaluation of the error resiliency of partial evaluations through fault injection experiments.
 \end{itemize}
 
+\bigbreak
+
 The remainder of this paper is organized as follows.
 Section~\ref{sec:background} provides an overview of the major components in this study.
-Section~\ref{sec:methodology} describes the implementation of the partial evaluation optimization on LLVM.
+Section~\ref{sec:methodology} describes the implementation of the partial evaluation optimization pass on LLVM.
 Section~\ref{sec:evaluation} presents an evaluation of the partial evaluation on five different benchmarks, and five different fault types.
-Finally, Section~\ref{sec:discussion} examines the implications of our results, while Section~\ref{sec:conclusion} concludes the paper.
+Section~\ref{sec:discussion} examines the implications of our results.
+Section~\ref{sec:related-work} explores related works to this study.
+Finally, Section~\ref{sec:conclusion} concludes the paper.

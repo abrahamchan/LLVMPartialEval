@@ -81,7 +81,6 @@ int main(int argc, char **argv)
 
 We implement the partial evaluation optimization as a transformation module pass in LLVM.
 C/C++ programs are compiled to LLVM IR using the Clang front-end and the partial evaluation optimization pass is applied subsequently on the generated IR.
-A system diagram of our partial evaluation optimizer is shown in Figure~\ref{fig:pe_diagram}.
 
 \begin{figure}[htbp]
   \centering
@@ -98,10 +97,12 @@ Upon completion of this step, functions can be selectively inlined into the prog
 Inlining eliminates the function call and integrates the remaining function instructions directly with the main program.
 Instead of inlining every function in the program, we only inline functions that have been successfully reduced to constant operations.
 Finally, any outstanding redundant instructions and dead code is eliminated.
+A system diagram of our partial evaluation optimizer is shown in Figure~\ref{fig:pe_diagram}.
 
 Adhering to the design principle, \textit{Separation of Concerns}, we opted to implement the minimal features required and allow subsequent passes to perform the rest of the optimization.
 Since the default build of LLVM provides transformation passes to carry out constant propagation, loop unrolling, instruction combining and dead code elimination, we only need to develop the features of input substitution (1) and selective inlining (2) as marked in Figure~\ref{fig:pe_diagram}.
 
+\bigbreak
 \subsubsection{Input Substitution}
 
 To perform input substitution, the optimization pass reads the program inputs from a user-defined input file. 
@@ -109,6 +110,7 @@ This is specified through a command line argument to the LLVM pass.
 The program inputs are substituted into variables referencing either the $argv$ command line argument array or $fread()$ instructions.
 Candidate variables for input substitution include both local and global variables.
 
+\bigbreak
 \subsubsection{Selective Inlining}
 
 By default, LLVM provides an inlining transformation pass.
