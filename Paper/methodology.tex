@@ -173,7 +173,7 @@ It is important to retain such function calls to avoid erroneous partial evaluat
 
 An example of selective inlining is shown in Figure~\ref{fig:inlining_ir}.
 This example builds on top of the optimized IR, previously shown in Figure~\ref{fig:input_sub_ir}.
-In this example, the function calls to \inlinecode{sum2()} and \inlinecode{sum()} are successfully replaced with constants.
+In this example, the function calls to \inlinecode{sum2()} and \inlinecode{sum()} are successfully inlined with the main function and replaced with constants.
 
 \begin{figure}[htbp]\
 \begin{Verbatim}[frame=single,fontsize={\scriptsize},numbers=left,numbersep=5pt,xleftmargin=10pt]
