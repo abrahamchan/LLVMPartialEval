@@ -14,7 +14,7 @@ We measure the error resilience of program partial evaluations and their origina
 
 Error resilience is defined as the complement of the fault outcome rate.
 Since we actually measure the fault outcome rate rather than the error resilience, we will work with the fault outcome rate in our measurements instead.
-The fault outcome rate, $f$ is 
+The fault outcome rate, denoted as $f$ is defined as 
 \begin{align*}
 f = \frac{F}{N}
 \end{align*}
@@ -48,7 +48,7 @@ LLFI injects software implemented faults into the program IR by modifying instru
 It offers a range of simulated hardware and software faults that model real-world conditions~\cite{V2005}.
 In this study, we select the following faults: bit flips, stuck-at-0, return value corruption, function call corruption, and invalid pointer.
 Bit flips represent transient hardware faults, while stuck-at-0 represents permanent hardware faults. 
-The rest of the faults represent transient software faults that occur as a result of a data corruption
+The rest of the faults represent transient software faults that occur as a result of a data corruption.
 We omit permanent software faults in this study as discussed in Section~\ref{sec:fault_model}.
 
 The injected faults are uniformly distributed throughout the program code.
@@ -82,11 +82,11 @@ We make the following hypothesis with respect to the failure outcome rates.
 
 \begin{hyp}
   \label{hyp:hypothesis}
-  The mean failure outcome rate ($\mu_p)$ of a program's partial evaluation is statistically equal to the mean failure outcome rate of the original program $(\mu_0$).
+The mean fault outcome rate ($f_p)$ of a program's partial evaluation is statistically equal to the mean fault outcome rate of the original program $(f_0$).
 \end{hyp}
 
 To realize this, we perform a two-sample t-test to determine whether the means are statistically equivalent to each other, within a 95\% confidence interval ($\delta_0$).
-Our hypothesis expressed in formal terms is $H_1: \mu_0 - \mu_p < \delta_0 $.
+Our hypothesis expressed in formal terms is $H_1: f_0 - f_p < \delta_0 $.
 
 In addition to measuring error resilience, we also measure the number of IR instructions in the partial evaluation and the original program respectively.
 This allows us to compute the degree of specialization, $\psi$, defined as
@@ -95,7 +95,7 @@ This allows us to compute the degree of specialization, $\psi$, defined as
 \end{align*}
 
 where $P$ and $P'$ are the number of IR instructions in the original program, and its partial evaluation respectively.
-The degree of specialization provides an approximate measure of the extent of code optimization.
+The degree of specialization provides an approximate measure of the extent of code optimization and allows us to reason about correlations between partial evaluations and error resilience.
 
 
 \subsection{Results}
