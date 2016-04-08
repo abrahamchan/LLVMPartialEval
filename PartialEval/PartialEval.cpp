@@ -57,6 +57,7 @@
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
 #include <string>
+#include <fstream>
 
 using namespace llvm;
 using namespace std;
@@ -85,6 +86,8 @@ namespace {
 
   private:
     // Add fields and helper functions for this pass here.
+    bool searchForStoreInstruction(BasicBlock *BB, vector<int> argv);
+    vector<int> readInputFile();
   };
 }
 
@@ -98,34 +101,73 @@ static RegisterPass<LLPE> X("partialeval",
 
 //----------------------------------------------------------------------------//
 // 
-// Function runOnFunction:
-// Entry point for the overall ScalarReplAggregates function pass.
-// This function is provided to you.
+// Function runOnModule:
+// Entry point for the overall LLPE module pass.
 // 
 //----------------------------------------------------------------------------//
 
 bool LLPE::runOnModule(Module &M) {
-	
-	//int input = 6;
   
+	vector<int> argv = readInputFile();
 
 	for (Module::iterator F = M.begin(), F_end = M.end(); F != F_end; ++F) {
-		errs() << F->getName() << "\n";
+
 		for (Function::arg_iterator A = F->arg_begin(), A_end = F->arg_end(); A != A_end; ++A) {
-			errs() << A->getName() << "\n";
 		
 			if (A->getName() == "argv") {
 				for (User::user_iterator U = A->user_begin(), U_end = A->user_end(); U != U_end; ++U) {
-					Instruction *User = cast<Instruction>(*U);
-					errs() << "Success" << "\n";
-					//StoreInst *SI = new StoreInst(6);
+					Instruction *User = dyn_cast<Instruction>(*U);
+					
+					StoreInst *SI = dyn_cast<StoreInst>(User);
+					AllocaInst *OrigAlloca = dyn_cast<AllocaInst>(SI->getOperand(1));
+					
+					for (User::user_iterator U2 = OrigAlloca->user_begin(), U2_end = OrigAlloca->user_end(); U2 != U2_end; ++U2) {
+						Instruction *User2 = dyn_cast<Instruction>(*U2);
+
+						for (User::user_iterator U3 = User2->user_begin(), U3_end = OrigAlloca->user_end(); U3 != U3_end; ++U3) {
+							searchForStoreInstruction(dyn_cast<Instruction>(*U3)->getParent(), argv);
+						}
+					}
+
 				}
 			}
 			
 		}
-		errs() << "\n";
+
 	}
    
 	return true;
 }
 
+bool LLPE::searchForStoreInstruction(BasicBlock *BB, vector<int> argv) {
+	bool GEPIFlag = false;
+	
+	//Iterate through each instruction in the basic block
+	for(BasicBlock::iterator BI = BB->begin(), BI_end = BB->end(); BI != BI_end; ++BI) {
+		if ( isa<GetElementPtrInst>(BI) ) {
+			GEPIFlag = true;
+		}
+		if (GEPIFlag) {
+			if ( StoreInst *SI = dyn_cast<StoreInst>(BI)) {
+				AllocaInst *constAlloca = dyn_cast<AllocaInst>(SI->getOperand(1));
+				constAlloca->print(errs());
+				StoreInst *constSI = new StoreInst(ConstantInt::get(Type::getInt32Ty(SI->getContext()), argv.at(0)), constAlloca, SI);
+				SI->eraseFromParent();
+				return true;
+			}
+		}
+	} //End BasicBlock loop
+	
+	return false;
+}
+
+vector<int> LLPE::readInputFile(){
+	ifstream infile("input.txt");
+	vector<int> argv;
+	
+	int argv_elem;
+	while (infile >> argv_elem) {
+		argv.push_back(argv_elem);
+	}
+	return argv;
+}
