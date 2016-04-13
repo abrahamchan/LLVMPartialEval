@@ -47,6 +47,7 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Operator.h"
 #include "llvm/Pass.h"
+#include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/MathExtras.h"
@@ -64,6 +65,8 @@ using namespace std;
 
 #define DEBUG_TYPE "NumExpanded"
 STATISTIC(NumExpanded,  "Number of aggregate allocas broken up");
+
+static cl::opt<string> InputFilename("inputfile", cl::desc("Specify input filename"), cl::value_desc("filename"));
 
 
 namespace {
@@ -161,8 +164,8 @@ bool LLPE::searchForStoreInstruction(BasicBlock *BB, vector<int> argv) {
 	return false;
 }
 
-vector<int> LLPE::readInputFile(){
-	ifstream infile("input.txt");
+vector<int> LLPE::readInputFile() {
+	ifstream infile(InputFilename);
 	vector<int> argv;
 	
 	int argv_elem;

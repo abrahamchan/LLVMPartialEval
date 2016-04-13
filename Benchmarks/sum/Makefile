@@ -25,6 +25,8 @@ old: $(TARGET).old
 
 new: $(TARGET).new
 
+INPUTFILE = input.txt
+
 
 .PRECIOUS: %.ll
 
@@ -39,7 +41,7 @@ new: $(TARGET).new
 # change the FirstName to your first name
 %.debug.bc: %.llvm.bc
 	$(LLVMOPT) $(DEBUGOPTS) < $< | \
-	$(LLVMOPT) -load $(DYLIB) -stats -partialeval $(BUILDOPTS) > $@
+	$(LLVMOPT) -load $(DYLIB) -stats -partialeval -inputfile $(INPUTFILE) $(BUILDOPTS) > $@
 
 %.old: %.c
 	$(CLANG) -o $@ $<
