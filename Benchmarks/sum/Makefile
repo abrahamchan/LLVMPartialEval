@@ -11,11 +11,12 @@ LLVMOPT = $(LLVMROOT)/bin/opt
 
 ## change library name appropriately for your system
 DYLIB   = $(LLVMROOT)/lib/libAssign2.so
+DY3LIB   = $(LLVMROOT)/lib/libAssign3.so
 
 ## Other choices: test or comparecfe (these will be provided later)
 default: debug
 DEBUGOPTS =  #-verify -inline -mem2reg -simplifycfg -globalopt -globaldce -adce -simplifycfg
-BUILDOPTS = -mem2reg -inline -instcombine -globaldce -adce
+BUILDOPTS = -instcombine -mem2reg -deadargelim -globaldce -adce
 
 debug:  clean
 	$(MAKE) $(TARGET).debug.ll
@@ -41,7 +42,8 @@ INPUTFILE = input.txt
 # change the FirstName to your first name
 %.debug.bc: %.llvm.bc
 	$(LLVMOPT) $(DEBUGOPTS) < $< | \
-	$(LLVMOPT) -load $(DYLIB) -stats -partialeval -inputfile $(INPUTFILE) $(BUILDOPTS) > $@
+	$(LLVMOPT) -load $(DYLIB) -stats -partialeval -inputfile $(INPUTFILE) $(BUILDOPTS) < $< | \
+	$(LLVMOPT) -load $(DY3LIB) -selectiveinline > $@
 
 %.old: %.c
 	$(CLANG) -o $@ $<
