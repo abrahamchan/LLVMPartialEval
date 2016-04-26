@@ -27,9 +27,15 @@ We consider a program's outcome to be faulty if the program encounters one of th
 
 \bigbreak
 
-We select five C/C++ benchmarks drawn from the Parboil~\cite{Parboil}, and SPEC CPU2006 benchmarks~\cite{SPEC} respectively.
-These benchmarks broadly represent a range of scientific computing applications, with easily configurable program inputs and deterministic outputs.
-The partial evaluation LLVM pass is executed on the five benchmarks, using the default input files for each benchmark.
+We select three benchmark programs in C, representing a range of scientific computing algorithms, with easily configurable program inputs and deterministic outputs.
+In practice, partial evaluations are deployed on program modules rather than on entire programs. 
+Therefore, the benchmark programs selected in this study focus on scientific algorithms including binary tree depth counting, fannkuch, and mandelbrot.
+The binary tree depth counting program traverses the nodes of a binary tree and counts the number of trees at each depth.
+Fannkuch, also known as pancake flipping, takes a permutation of a set of integers up to a number N, and computes the total number of possible permutations by flipping neighbour elements.
+Mandelbrot is a mathematical application that generates the set of complex numbers, for which the orbits of the quadratic recurrence equation do not diverge.
+The generated set of complex numbers is plotted on the complex plane as a binary image file.
+
+The partial evaluation LLVM pass is executed on the three benchmarks, using three different inputs for each benchmark.
 Then, 1000 fault injections of each fault type is conducted on the partial evaluations.
 The fault injections are repeated again with the original unoptimized implementations (baseline).
 The statistics of the fault outcomes are collected and compared to their baselines. 
@@ -42,6 +48,10 @@ Figure~\ref{fig:evaluation_sys} illustrates the prescribed experimental setup.
   \label{fig:evaluation_sys}
 \end{figure}
 
+In the algorithms we selected, we anticipate that they will tolerate singular faults.
+For example, we expect the binary tree depth counting program to tolerate pointer errors at individual nodes, without impacting traversal of the remaining tree.
+However, the specialized forms of the program may eliminate such features upon compile time optimization.
+Thus, we aim to measure and compare the error resiliencies of the baseline and its partial evaluation respectively.
 
 We utilize the LLVM based fault injector, LLFI~\cite{LLFI} to carry out the experimentation.
 LLFI injects software implemented faults into the program IR by modifying instruction or register values of the program at runtime.
@@ -101,3 +111,5 @@ The degree of specialization provides an approximate measure of the extent of co
 \subsection{Results}
 \label{sec:results}
 Forthcoming.
+
+
