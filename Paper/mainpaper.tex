@@ -64,13 +64,17 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{ntheorem}
+\usepackage{multirow}
 
 
 \graphicspath{{Figures/}}
 
 \newcommand{\inlinecode}{\texttt}
 
+% Define hypothesis and observation handles
 \newtheorem{hyp}{Hypothesis}
+\newtheorem{obs}{Observation}
+
 
 \begin{document}
 %
@@ -107,7 +111,8 @@ Email: sunb@ece.ubc.ca}}
 
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
-%\input{abstract}
+
+\input{abstract}
 
 \input{intro}
 \input{background}

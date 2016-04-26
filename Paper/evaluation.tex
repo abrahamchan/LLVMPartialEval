@@ -112,4 +112,33 @@ The degree of specialization provides an approximate measure of the extent of co
 \label{sec:results}
 Forthcoming.
 
+\begin{obs}
+  \label{obs:density}
+  The speedup factor of program partial evaluations increases when the input load is increased.   
+\end{obs}
 
+\begin{table}[htbp]
+\small{
+\begin{center}
+    \begin{tabular}{|p{1.7cm}|c|c|c|c|c|c|}
+    \hline
+    \textbf{Benchmark} & \textbf{$P_s$} & \textbf{$P'_s$} &  \textbf{Input} & \textbf{$P_t$} & \textbf{$P'_t$} & $\psi$ \\ \hline
+    \multirow{3}{*}{Depthcount}
+    & & & 8 & 8 & 6.9 & 0\\
+	& 312 & 201 & 10 & 21 & 20 & 0 \\
+ 	& & & 12 & 87 & 84 & 0 \\ \hline
+ 	\multirow{3}{*}{Fannkuch}
+    & & & 8 & 9 & 6 & 0\\
+	& 359 & 462 & 9 & 54 & 28 & 0 \\
+ 	& & & 10 & 540 & 240 & 0 \\ \hline
+ 	\multirow{3}{*}{Mandelbrot}
+    & & & 10 & 0.051 & 0.043 & 0\\
+	& 238 & 151 & 100 & 2.4 & 0.17 & 0 \\
+ 	& & & 1000 & 205 & 1.5 & 0 \\ \hline
+    \hline
+    \end{tabular}
+    \end{center}
+    }
+    \caption{IR Sizes and Average Execution Times of Benchmark Programs}
+    \label{tab:benchmarks}
+\end{table}
