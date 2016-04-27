@@ -114,7 +114,76 @@ Forthcoming.
 
 \begin{obs}
   \label{obs:density}
-  The speedup factor of program partial evaluations increases when the input load is increased.   
+  On average, the fault outcome rates of a program and its partial evaluation are not statistically different from each other.
+\end{obs}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[keepaspectratio=true,width=\columnwidth]{BinaryTree_8}
+  \caption{Fault Outcome Rates of DepthCount, with N=8}
+  \label{fig:BinaryTree_8}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[keepaspectratio=true,width=\columnwidth]{BinaryTree_10}
+  \caption{Fault Outcome Rates of DepthCount, with N=10}
+  \label{fig:BinaryTree_10}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[keepaspectratio=true,width=\columnwidth]{BinaryTree_12}
+  \caption{Fault Outcome Rates of DepthCount, with N=12}
+  \label{fig:BinaryTree_12}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[keepaspectratio=true,width=\columnwidth]{Fannkuch_8}
+  \caption{Fault Outcome Rates of Fannkuch, with N=8}
+  \label{fig:Fannkuch_8}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[keepaspectratio=true,width=\columnwidth]{Fannkuch_9}
+  \caption{Fault Outcome Rates of Fannkuch, with N=9}
+  \label{fig:Fannkuch_9}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[keepaspectratio=true,width=\columnwidth]{Fannkuch_10}
+  \caption{Fault Outcome Rates of Fannkuch, with N=10}
+  \label{fig:Fannkuch_10}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[keepaspectratio=true,width=\columnwidth]{Mandelbrot_10}
+  \caption{Fault Outcome Rates of Mandelbrot, with N=10}
+  \label{fig:Mandelbrot_10}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[keepaspectratio=true,width=\columnwidth]{Mandelbrot_100}
+  \caption{Fault Outcome Rates of Mandelbrot, with N=100}
+  \label{fig:Mandelbrot_100}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[keepaspectratio=true,width=\columnwidth]{Mandelbrot_1000}
+  \caption{Fault Outcome Rates of Mandelbrot, with N=1000}
+  \label{fig:Mandelbrot_1000}
+\end{figure}
+
+
+\begin{obs}
+  \label{obs:density}
+  The speedup factor of program partial evaluations increases when the program load increases, without significantly impacting the fault outcome rate.   
 \end{obs}
 
 \begin{table}[htbp]
@@ -122,7 +191,7 @@ Forthcoming.
 \begin{center}
     \begin{tabular}{|p{1.7cm}|c|c|c|c|c|c|}
     \hline
-    \textbf{Benchmark} & \textbf{$P_s$} & \textbf{$P'_s$} &  \textbf{Input} & \textbf{$P_t$} & \textbf{$P'_t$} & $\psi$ \\ \hline
+    \textbf{Benchmark} & \textbf{$P_s$} & \textbf{$P'_s$} &  \textbf{Input} & \textbf{$P_t$ (ms)} & \textbf{$P'_t$ (ms)} & $\psi$ \\ \hline
     \multirow{3}{*}{Depthcount}
     & & & 8 & 8 & 6.9 & 0\\
 	& 312 & 201 & 10 & 21 & 20 & 0 \\
