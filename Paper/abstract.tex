@@ -1,3 +1,8 @@
 \begin{abstract}
-
+Program optimization and fault tolerance have become increasingly important as the software systems becomes more complex and important in various fields including mission-critical systems.
+Different levels of optimization exists from application level to compiler level aiming to optimize according to different program needs.
+Here we propose partial evaluation, which is a form of of program specialization by specializing program inputs during compile time to reduce run-time overheads.
+We implement our optimization by separating into two optimization methods: constant substitution and functional inline.
+To test the partially evaluated program fault tolerance, we run fault injection into selected benchmarks to compare the fault tolerance between them by LLFI, a software fault-injection tools with five error types.
+Experiment results show that partially-evaluated program can significantly reduce program instruction numbers by our optimization while the fault tolerance is not better comparing to the original program.
 \end{abstract}

@@ -25,12 +25,15 @@ We consider a program's outcome to be faulty if the program encounters one of th
 \item Crashes/Hangs
 \end{itemize}
 
+SDC specifies faulty runs that terminate normally but result in an incorrect program output. 
+Crashes/Hangs indicates faulty runs that either terminate prematurely or time out.
+
 \bigbreak
 
 We select three benchmark programs in C, representing a range of scientific computing algorithms, with easily configurable program inputs and deterministic outputs.
 In practice, partial evaluations are deployed on program modules rather than on entire programs. 
-Therefore, the benchmark programs selected in this study focus on scientific algorithms including binary tree depth counting, fannkuch, and mandelbrot.
-The binary tree depth counting program traverses the nodes of a binary tree and counts the number of trees at each depth.
+Therefore, the benchmark programs selected in this study focus on scientific algorithms including DepthCount, Fannkuch, and Mandelbrot.
+DepthCount traverses the nodes of a binary tree and counts the number of trees at each depth.
 Fannkuch, also known as pancake flipping, takes a permutation of a set of integers up to a number N, and computes the total number of possible permutations by flipping neighbour elements.
 Mandelbrot is a mathematical application that generates the set of complex numbers, for which the orbits of the quadratic recurrence equation do not diverge.
 The generated set of complex numbers is plotted on the complex plane as a binary image file.
@@ -69,14 +72,14 @@ We consider only activated faults, or those in which the modified data is read b
 \begin{table}[htbp]
 \small{
 \begin{center}
-    \begin{tabular}{|p{3cm}|p{5cm}|}
+    \begin{tabular}{|p{0.1cm}|p{2.4cm}|p{5cm}|}
     \hline
-    \textbf{Fault Type} & \textbf{LLFI Implementation} \\ \hline
-    Bit Flip & Randomly flips a single bit in an arbitrary data value computed in the program  \\ \hline
-    Stuck at 0 & Randomly sets a single bit to 0 in an arbitrary data value computed in the program  \\ \hline
-    Return Value Corruption & Randomly corrupts the return value of a function call \\ \hline
-    Function Call Corruption & Randomly corrupts the source register (i.e., parameter) of a function call \\ \hline
-    Invalid Pointer & Randomly corrupts the returned pointer from malloc and calloc\\ \hline
+     & \textbf{Fault Type} & \textbf{LLFI Implementation} \\ \hline
+    A & Bit Flip & Randomly flips a single bit in an arbitrary data value computed in the program  \\ \hline
+    B & Stuck at 0 & Randomly sets a single bit to 0 in an arbitrary data value computed in the program  \\ \hline
+    C & Return Value Corruption & Randomly corrupts the return value of a function call \\ \hline
+    D & Function Call Corruption & Randomly corrupts the source register (i.e., parameter) of a function call \\ \hline
+    E & Invalid Pointer & Randomly corrupts the returned pointer from malloc and calloc\\ \hline
     \hline
     \end{tabular}
     \end{center}
@@ -92,30 +95,51 @@ We make the following hypothesis with respect to the failure outcome rates.
 
 \begin{hyp}
   \label{hyp:hypothesis}
-The mean fault outcome rate ($f_p)$ of a program's partial evaluation is statistically equal to the mean fault outcome rate of the original program $(f_0$).
+The mean fault outcome rate $(f_p)$ of a program's partial evaluation is statistically equal to the mean fault outcome rate of the original program $(f_0$).
 \end{hyp}
 
 To realize this, we perform a two-sample t-test to determine whether the means are statistically equivalent to each other, within a 95\% confidence interval ($\delta_0$).
 Our hypothesis expressed in formal terms is $H_1: f_0 - f_p < \delta_0 $.
 
-In addition to measuring error resilience, we also measure the number of IR instructions in the partial evaluation and the original program respectively.
-This allows us to compute the degree of specialization, $\psi$, defined as
+In addition to measuring error resilience, we also measure the number of IR instructions and the execution times of the partial evaluation and the original program respectively.
+This allows us to compute the speedup factor, $\psi$, defined as
 \begin{align*}
-\psi = \frac{P - P'}{P}
+\psi = \frac{P_t}{P'_t}
 \end{align*}
 
-where $P$ and $P'$ are the number of IR instructions in the original program, and its partial evaluation respectively.
-The degree of specialization provides an approximate measure of the extent of code optimization and allows us to reason about correlations between partial evaluations and error resilience.
+where $P_t$ and $P'_t$ are the execution durations of the original program, and its partial evaluation respectively.
+The speedup factor provides an approximate measure of the extent of code optimization and allows us to reason about correlations between partial evaluations and error resilience.
 
 
 \subsection{Results}
 \label{sec:results}
-Forthcoming.
+
+We make the following observations from our set of fault injection experiments.
 
 \begin{obs}
-  \label{obs:density}
+  \label{obs:faultoutcomes}
   On average, the fault outcome rates of a program and its partial evaluation are not statistically different from each other.
 \end{obs}
+
+Figures [\ref{fig:BinaryTree_8}-\ref{fig:Mandelbrot_1000}] show the fault outcome rates of the original program $(f_0)$ and its partial evaluation $(f_p)$ respectively for each fault type.
+These results are shown for three different inputs to each of the three benchmarks over 1000 fault injections.  
+In the graphs, $f_0$ is denoted as P and $f_p$ is denoted as PE.
+The fault outcome rates are further divided into their failure modes: SDCs and Crash/Hangs.
+The errors bounds denote the standard error margins of the reported fault outcome rates.
+
+Overall, we find that $f_0$ and $f_p$ are within the standard error margin in most of the fault injection runs.
+However, many exceptions to this trend are present.
+The most significant differences can be observed in the SDC and Crash/Hang rates of Return Value Corruptions in Figure~\ref{fig:Fannkuch_8} and the SDC rates among all fault types in Figure~\ref{fig:Mandelbrot_10} and Figure~\ref{fig:Mandelbrot_100}.
+
+Tables [\ref{tab:DepthCount_TTest}-\ref{tab:Mandelbrot_TTest}] shows the results of the two sample t-test conducted on the mean SDC failure outcomes for each fault type.
+Due to space constraints, we only show the t-test results for SDCs, and not for crash/hangs.
+Here, $n_0$ and $n_p$ represent the absolute mean number of faulty runs that result in SDC failures. 
+
+Since our confidence interval is 95\%, $\alpha=0.05$.
+If the p value is less than the alpha value, our hypothesis is rejected.
+In a majority of the entries, our hypothesis statistically holds.
+It also appears that the fault resiliencies do not statistically differ when programs are subject to a greater input load.
+In the case of Mandelbrot, the gap between fault resiliencies of the program and its partial evaluation reduced in N=1000 compared to N=10.
 
 \begin{figure}[htbp]
   \centering
@@ -181,29 +205,127 @@ Forthcoming.
 \end{figure}
 
 
-\begin{obs}
-  \label{obs:density}
-  The speedup factor of program partial evaluations increases when the program load increases, without significantly impacting the fault outcome rate.   
-\end{obs}
+\begin{table}[htbp]
+\small{
+\begin{center}
+    \begin{tabular}{|p{0.7cm}|c|c|c|c|c|}
+    \hline
+    \textbf{Input} & \textbf{Fault} & \textbf{$n_0$ (SE)} & \textbf{$n_p$ (SE)} & \textbf{t} & \textbf{p} \\ \hline
+    \multirow{5}{*}{8}
+    & A & 256(13.80) & 276(14.14) & 1.0122 & 0.3115 \\
+	& B & 106(9.73) & 114(10.05) & 0.5719 & 0.5675 \\
+ 	& C & 237(13.45) & 276(14.14) & 1.9984 & 0.0458 \\
+ 	& D & 228(13.27) & 283(14.24) & 2.8256 & 0.0048 \\
+ 	& E & 249(13.67) & 290(14.35) & 2.0687 & 0.0387 \\ \hline
+    \multirow{5}{*}{10}
+    & A & 225(13.21) & 293(14.39) & 3.4811 & $<$0.001 \\
+	& B & 99(9.44) & 102(9.57) & 0.2232 & 0.8234 \\
+ 	& C & 249(13.67) & 280(14.20) & 1.5728 & 0.1159 \\
+ 	& D & 214(12.97) & 266(13.97) & 2.7279 & 0.0064 \\
+ 	& E & 231(13.33) & 305(14.56) & 3.7487 & $<$0.001 \\ \hline
+ 	\multirow{5}{*}{12}
+    & A & 274(14.10) & 307(14.59) & 1.6264 & 0.1040 \\
+	& B & 112(9.97) & 124(10.42) & 0.8321 & 0.4055 \\
+ 	& C & 259(13.85) & 266(13.97) & 0.3558 & 0.7220 \\
+ 	& D & 236(13.43) & 287(14.30) & 2.5997 & 0.0094 \\
+ 	& E & 240(13.51) & 309(14.61) & 3.4675 & $<$0.001 \\ \hline
+    \hline
+    \end{tabular}
+    \end{center}
+    }
+    \caption{T-Test Results for DepthCount SDC Fault Outcomes}
+    \label{tab:DepthCount_TTest}
+\end{table}
 
 \begin{table}[htbp]
 \small{
 \begin{center}
-    \begin{tabular}{|p{1.7cm}|c|c|c|c|c|c|}
+    \begin{tabular}{|p{0.7cm}|c|c|c|c|c|}
+    \hline
+    \textbf{Input} & \textbf{Fault} & \textbf{$n_0$ (SE)} & \textbf{$n_p$ (SE)} & \textbf{t} & \textbf{p} \\ \hline
+    \multirow{5}{*}{8}
+    & A & 335(14.93) & 353(15.11) & 0.8474 & 0.3969 \\
+	& B & 78(8.48) & 63(7.68) & 1.3111 &  0.1900 \\
+ 	& C & 247(13.64) & 374(15.30) & 6.1959 & $<$0.001 \\
+ 	& D & 289(14.33) & 312(14.65) & 1.1223 & 0.2619 \\
+ 	& E & 340(14.98) & 329(14.86) & 0.5213 & 0.6022 \\ \hline
+    \multirow{5}{*}{9}
+    & A & 323(14.79) & 314(14.68) & 0.4319 & 0.6659 \\
+	& B & 107(9.78) & 160(11.59) & 3.4949 & $<$0.001 \\
+ 	& C & 427(15.64) & 436(15.68) & 0.4064 & 0.6845 \\
+ 	& D & 301(14.51) & 347(15.05) & 2.2004 & 0.0279 \\
+ 	& E & 368(15.25) & 372(15.28) & 0.1853 & 0.8530 \\ \hline
+ 	\multirow{5}{*}{10}
+    & A & 251(13.71) & 314(14.68) & 3.1364 & 0.0017 \\
+	& B & 7(3.64) & 74(8.28) & 7.4076 & $<$0.001 \\
+ 	& C & 416(15.59) & 300(14.49) & 5.4501 & $<$0.001 \\
+ 	& D & 180(12.15) & 293(14.39) & 6.0000 & $<$0.001 \\
+ 	& E & 232(13.35) & 187(12.33) & 2.4762 & 0.0134 \\ \hline
+    \hline
+    \end{tabular}
+    \end{center}
+    }
+    \caption{T-Test Results for Fannkuch SDC Fault Outcomes}
+    \label{tab:Fannkuch_TTest}
+\end{table}
+
+\begin{table}[htbp]
+\small{
+\begin{center}
+    \begin{tabular}{|p{0.7cm}|c|c|c|c|c|}
+    \hline
+    \textbf{Input} & \textbf{Fault} & \textbf{$n_0$ (SE)} & \textbf{$n_p$ (SE)} & \textbf{t} & \textbf{p} \\ \hline
+    \multirow{5}{*}{1000}
+    & A & 57(7.33) & 100(9.49) & 3.5860 & $<$0.001 \\
+	& B & 28(5.22) & 34(5.73) & 0.7741 &  0.4390 \\
+ 	& C & 80(8.58) & 97(9.36) & 1.3388 & 0.1808 \\
+ 	& D & 68(7.96) & 92(9.14) & 1.9802 & 0.0478 \\
+ 	& E & 72(8.17) & 67(7.91) & 0.4397 & 0.6602 \\ \hline
+    \hline
+    \end{tabular}
+    \end{center}
+    }
+    \caption{T-Test Results for Mandelbrot SDC Fault Outcomes}
+    \label{tab:Mandelbrot_TTest}
+\end{table}
+
+\begin{obs}
+  \label{obs:speedup}
+  The speed up factor of program partial evaluations increases when the program load increases, without significantly impacting the fault outcome rate.
+\end{obs}
+
+In Table~\ref{tab:benchmarks}, we measure the lines of IR instructions of the original program and its partial evaluation, denoted by $P_s$ and $P'_s$ respectively.
+We also measure the execution times $P_t$ and $P'_t$ in milliseconds, operating under different program inputs. 
+We observe that $\psi$ is marginal for Depthcount, but is significant for Fannkuch and Mandelbrot.
+Additionally, in the latter benchmarks, $\psi$ increases when the input load is increased.
+
+Consider the cases of N=10 in Fannkuch and N=1000 and Mandelbrot.
+Referring back to Figure~\ref{fig:Fannkuch_10} and Figure~\ref{fig:Mandelbrot_1000} and their corresponding t-test results, we see that the fault outcome rates between the program and its partial evaluation are statistically different.
+Though the hypothesis is rejected, the partial evaluation's fault outcome rates are only marginally greater than the original program.
+The maximum difference between fault outcome rates in Fannkuch N=10, is $12\%$ for return value corruption.
+The average difference is 8\% among all fault types for a speedup factor of 2.25. 
+In Mandelbrot N=1000, the maximum difference is $4\%$ for bit flips.
+The average difference is 2\% among all fault types for a speedup factor of 136. 
+
+
+\begin{table}[htbp]
+\small{
+\begin{center}
+    \begin{tabular}{|p{1.4cm}|c|c|c|c|c|c|}
     \hline
     \textbf{Benchmark} & \textbf{$P_s$} & \textbf{$P'_s$} &  \textbf{Input} & \textbf{$P_t$ (ms)} & \textbf{$P'_t$ (ms)} & $\psi$ \\ \hline
     \multirow{3}{*}{Depthcount}
-    & & & 8 & 8 & 6.9 & 0\\
-	& 312 & 201 & 10 & 21 & 20 & 0 \\
- 	& & & 12 & 87 & 84 & 0 \\ \hline
+    & & & 8 & 8 & 6.9 & 1.16\\
+	& 312 & 201 & 10 & 21 & 20 & 1.05 \\
+ 	& & & 12 & 87 & 84 & 1.04 \\ \hline
  	\multirow{3}{*}{Fannkuch}
-    & & & 8 & 9 & 6 & 0\\
-	& 359 & 462 & 9 & 54 & 28 & 0 \\
- 	& & & 10 & 540 & 240 & 0 \\ \hline
+    & & & 8 & 9 & 6 & 1.5\\
+	& 359 & 462 & 9 & 54 & 28 & 1.93 \\
+ 	& & & 10 & 540 & 240 & 2.25 \\ \hline
  	\multirow{3}{*}{Mandelbrot}
-    & & & 10 & 0.051 & 0.043 & 0\\
-	& 238 & 151 & 100 & 2.4 & 0.17 & 0 \\
- 	& & & 1000 & 205 & 1.5 & 0 \\ \hline
+    & & & 10 & 0.051 & 0.043 & 1.19\\
+	& 238 & 151 & 100 & 2.4 & 0.17 & 14.12 \\
+ 	& & & 1000 & 205 & 1.5 & 136 \\ \hline
     \hline
     \end{tabular}
     \end{center}
@@ -211,3 +333,5 @@ Forthcoming.
     \caption{IR Sizes and Average Execution Times of Benchmark Programs}
     \label{tab:benchmarks}
 \end{table}
+
+
