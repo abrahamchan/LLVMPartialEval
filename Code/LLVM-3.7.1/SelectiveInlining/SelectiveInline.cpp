@@ -1,4 +1,4 @@
-//===- SelectiveInline.cpp - Code to perform simple function inlining --------===//
+//===- SelectiveInline.cpp - Code to perform selective function inlining --------===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -104,6 +104,8 @@ void SelectiveInline::getAnalysisUsage(AnalysisUsage &AU) const {
   Inliner::getAnalysisUsage(AU);
 }
 
+//Returns true if all arguments to a function call are constants.
+//Returns false otherwise. 
 bool SelectiveInline::allArgsConst(CallSite &CS) {
 	for (CallSite::arg_iterator AI = CS.arg_begin(), CS_end = CS.arg_end(); AI != CS_end; ++AI) {
 		if ( isa<Instruction>(AI)) {

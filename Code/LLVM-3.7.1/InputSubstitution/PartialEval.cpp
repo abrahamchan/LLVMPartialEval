@@ -63,8 +63,6 @@
 using namespace llvm;
 using namespace std;
 
-#define DEBUG_TYPE "NumExpanded"
-STATISTIC(NumExpanded,  "Number of aggregate allocas broken up");
 
 static cl::opt<string> InputFilename("inputfile", cl::desc("Specify input filename"), cl::value_desc("filename"));
 
@@ -117,7 +115,10 @@ bool LLPE::runOnModule(Module &M) {
 
 		for (Function::arg_iterator A = F->arg_begin(), A_end = F->arg_end(); A != A_end; ++A) {
 		
+			//Search for variables referencing argv
 			if (A->getName() == "argv") {
+				
+				//Iterate through uses of argv
 				for (User::user_iterator U = A->user_begin(), U_end = A->user_end(); U != U_end; ++U) {
 					Instruction *User = dyn_cast<Instruction>(*U);
 					
@@ -146,6 +147,7 @@ bool LLPE::searchForStoreInstruction(BasicBlock *BB, vector<int> argv) {
 	bool GEPIFlag = false;
 	
 	//Iterate through each instruction in the basic block
+	//Search for GEPI. The next store after a GEPI, indicates the location for inserting a new alloca instruction.
 	for(BasicBlock::iterator BI = BB->begin(), BI_end = BB->end(); BI != BI_end; ++BI) {
 		if ( isa<GetElementPtrInst>(BI) ) {
 			GEPIFlag = true;
@@ -164,6 +166,7 @@ bool LLPE::searchForStoreInstruction(BasicBlock *BB, vector<int> argv) {
 	return false;
 }
 
+//Read the program input from an input text file
 vector<int> LLPE::readInputFile() {
 	ifstream infile(InputFilename);
 	vector<int> argv;
