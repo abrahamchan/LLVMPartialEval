@@ -31,7 +31,7 @@ Crashes/Hangs indicates faulty runs that either terminate prematurely or time ou
 \bigbreak
 
 We select three benchmark programs in C from The Computer Language Benchmarks Game~\cite{BenchmarkSuite}, representing a range of scientific computing algorithms, with easily configurable program inputs and deterministic outputs.
-In practice, partial evaluations are deployed on program modules rather than on entire programs. 
+In practice, partial evaluations are deployed on program modules rather than on entire programs~\cite{Jones1993}.
 Therefore, the benchmark programs selected in this study focus on scientific algorithms including DepthCount, Fannkuch, and Mandelbrot.
 DepthCount traverses the nodes of a binary tree and counts the number of trees at each depth.
 Fannkuch, also known as pancake flipping, takes a permutation of a set of integers up to a number N, and computes the total number of possible permutations by flipping neighbour elements.
@@ -123,7 +123,7 @@ We make the following observations from our set of fault injection experiments.
 \end{obs}
 
 Figures [\ref{fig:BinaryTree_8}-\ref{fig:Mandelbrot_1000}] show the fault outcome rates of the original program $(f_0)$ and its partial evaluation $(f_p)$ respectively for each fault type.
-These results are shown for three different inputs (values of N) to each of the three benchmarks over 1000 fault injections.  
+These results are shown for three different inputs (values of N) over each of the three benchmarks, across 1000 fault injections.  
 In the graphs, $f_0$ is denoted as P and $f_p$ is denoted as PE.
 The fault outcome rates are further divided into their failure modes: SDCs and Crash/Hangs.
 The error bounds denote the standard error margins of the reported fault outcome rates.
@@ -133,7 +133,8 @@ However, many exceptions to this trend are present.
 The most significant differences can be observed in the SDC and Crash/Hang rates of Return Value Corruptions in Figure~\ref{fig:Fannkuch_8} and the SDC rates among all fault types in Figure~\ref{fig:Mandelbrot_10} and Figure~\ref{fig:Mandelbrot_100}.
 
 Tables [\ref{tab:DepthCount_TTest}-\ref{tab:Mandelbrot_TTest}] show the results of the two sample t-test conducted on the mean SDC and Crash/Hang failure outcomes for each fault type.
-Here, $n_0$ and $n_p$ represent the absolute mean number of faulty runs that result in failures. 
+We did not perform a t-test on Crash/Hang failure outcomes for Mandelbrot as the means were too small.
+Here, $n_0$ and $n_p$ represent the absolute mean number of faulty runs that result in failures during the 1000 fault injections. 
 
 Since our confidence interval is 95\%, $\alpha=0.05$.
 If the p value is less than the alpha value, our hypothesis is rejected.
