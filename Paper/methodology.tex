@@ -174,14 +174,15 @@ It is important to retain such function calls to avoid erroneous partial evaluat
 An example of selective inlining is shown in Figure~\ref{fig:inlining_ir}.
 This example builds on top of the optimized IR, previously shown in Figure~\ref{fig:input_sub_ir}.
 In this example, the function calls to \inlinecode{sum2()} and \inlinecode{sum()} are successfully inlined with the main function and replaced with constants.
+The N variable is no longer needed by the program and is removed as a dead instruction.
 
 \begin{figure}[htbp]\
 \begin{Verbatim}[frame=single,fontsize={\scriptsize},numbers=left,numbersep=5pt,xleftmargin=10pt]
 define i32 @main(i32 %argc, i8** %argv) #0 {
 ...
-  store i32 6, i32* %N, align 4
+  store i32 21, i32* %gold, align 4
   store i32 21, i32* %s, align 4
-  %5 = icmp eq i32 %N, %s
+  %5 = icmp eq i32 %gold, %s
 ...
 }
 \end{Verbatim}
@@ -190,3 +191,16 @@ define i32 @main(i32 %argc, i8** %argv) #0 {
 \end{figure}
 
 For the remainder of this paper, partial evaluation refers to our custom implementation on LLVM. 
+
+
+\subsection{Fault Tolerance in Partial Evaluations}
+
+Comparing the partial evaluation shown in Figure~\ref{fig:inlining_ir} with the original code in Figure~\ref{fig:original_ir}, the number of instructions have been significantly reduced.
+We also notice that the partial evaluation can be further optimized by eliminating the \inlinecode{icmp} instruction and other subsequent dead blocks.
+Despite the elimination of intermediary steps, the partial evaluation behaves exactly the same as the original program under normal conditions. 
+
+Now, consider the scenario where an unexpected fault corrupts the value of \inlinecode{\%s}. 
+In Figure~\ref{fig:inlining_ir}, the program will be able to detect the corruption of \inlinecode{\%s} through the compare instruction on line 5.
+However, if the compare instruction is eliminated through additional optimizations, the program will not be able to detect this corruption in the same basic block.
+This would allow the error to propagate further down the optimized program than the original program.
+This scenario could lead to a deterioration of error resilience if the corrupted variable is referenced in subsequent instructions. 

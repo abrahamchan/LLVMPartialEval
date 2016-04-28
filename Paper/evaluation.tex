@@ -30,7 +30,7 @@ Crashes/Hangs indicates faulty runs that either terminate prematurely or time ou
 
 \bigbreak
 
-We select three benchmark programs in C, representing a range of scientific computing algorithms, with easily configurable program inputs and deterministic outputs.
+We select three benchmark programs in C from The Computer Language Benchmarks Game~\cite{BenchmarkSuite}, representing a range of scientific computing algorithms, with easily configurable program inputs and deterministic outputs.
 In practice, partial evaluations are deployed on program modules rather than on entire programs. 
 Therefore, the benchmark programs selected in this study focus on scientific algorithms including DepthCount, Fannkuch, and Mandelbrot.
 DepthCount traverses the nodes of a binary tree and counts the number of trees at each depth.
@@ -53,7 +53,7 @@ Figure~\ref{fig:evaluation_sys} illustrates the prescribed experimental setup.
 \end{figure}
 
 In the algorithms we selected, we anticipate that they will tolerate singular faults.
-For example, we expect the binary tree depth counting program to tolerate pointer errors at individual nodes, without impacting traversal of the remaining tree.
+For example, we expect DepthCount to tolerate pointer errors at individual tree nodes, without impacting traversal of the remaining tree.
 However, the specialized forms of the program may eliminate such features upon compile time optimization.
 Thus, we aim to measure and compare the error resiliencies of the baseline and its partial evaluation respectively.
 
@@ -123,18 +123,17 @@ We make the following observations from our set of fault injection experiments.
 \end{obs}
 
 Figures [\ref{fig:BinaryTree_8}-\ref{fig:Mandelbrot_1000}] show the fault outcome rates of the original program $(f_0)$ and its partial evaluation $(f_p)$ respectively for each fault type.
-These results are shown for three different inputs to each of the three benchmarks over 1000 fault injections.  
+These results are shown for three different inputs (values of N) to each of the three benchmarks over 1000 fault injections.  
 In the graphs, $f_0$ is denoted as P and $f_p$ is denoted as PE.
 The fault outcome rates are further divided into their failure modes: SDCs and Crash/Hangs.
-The errors bounds denote the standard error margins of the reported fault outcome rates.
+The error bounds denote the standard error margins of the reported fault outcome rates.
 
 Overall, we find that $f_0$ and $f_p$ are within the standard error margin in most of the fault injection runs.
 However, many exceptions to this trend are present.
 The most significant differences can be observed in the SDC and Crash/Hang rates of Return Value Corruptions in Figure~\ref{fig:Fannkuch_8} and the SDC rates among all fault types in Figure~\ref{fig:Mandelbrot_10} and Figure~\ref{fig:Mandelbrot_100}.
 
-Tables [\ref{tab:DepthCount_TTest}-\ref{tab:Mandelbrot_TTest}] shows the results of the two sample t-test conducted on the mean SDC failure outcomes for each fault type.
-Due to space constraints, we only show the t-test results for SDCs, and not for crash/hangs.
-Here, $n_0$ and $n_p$ represent the absolute mean number of faulty runs that result in SDC failures. 
+Tables [\ref{tab:DepthCount_TTest}-\ref{tab:Mandelbrot_TTest}] show the results of the two sample t-test conducted on the mean SDC and Crash/Hang failure outcomes for each fault type.
+Here, $n_0$ and $n_p$ represent the absolute mean number of faulty runs that result in failures. 
 
 Since our confidence interval is 95\%, $\alpha=0.05$.
 If the p value is less than the alpha value, our hypothesis is rejected.
@@ -245,6 +244,38 @@ In the case of Mandelbrot, the gap between fault resiliencies of the program and
     \hline
     \textbf{Input} & \textbf{Fault} & \textbf{$n_0$ (SE)} & \textbf{$n_p$ (SE)} & \textbf{t} & \textbf{p} \\ \hline
     \multirow{5}{*}{8}
+    & A & 663(14.95) & 639(15.19) & 1.1261 & 0.2603 \\
+	& B & 143(11.07) & 135(10.81) & 0.5170 & 0.6052 \\
+ 	& C & 658(15.00) & 636(15.22) & 1.0295 & 0.3034 \\
+ 	& D & 682(14.73) & 628(15.28) & 2.5443 & 0.0110 \\
+ 	& E & 656(15.02) & 625(15.31) & 1.4454 & 0.1485 \\ \hline
+    \multirow{5}{*}{10}
+    & A & 675(14.81) & 620(15.35) & 2.5786 & 0.0100 \\
+	& B & 136(10.84) & 134(10.77) & 0.1309 & 0.8959 \\
+ 	& C & 634(15.23) & 634(15.23) & 0.0000 & 1.0000 \\
+ 	& D & 705(14.42) & 633(15.24) & 3.4317 & $<$0.001 \\
+ 	& E & 663(14.95) & 612(15.41) & 2.3754 & 0.0176 \\ \hline
+ 	\multirow{5}{*}{12}
+    & A & 634(15.23) & 610(15.42) & 1.1074 & 0.2683 \\
+	& B & 139(10.94) & 107(9.78) & 2.1807 & 0.0293 \\
+ 	& C & 639(15.19) & 636(15.22) & 0.1395 & 0.8891 \\
+ 	& D & 671(14.86) & 636(15.22) & 1.6454 & 0.1000 \\
+ 	& E & 667(14.90) & 601(15.49) & 3.0708 & 0.0022 \\ \hline
+    \hline
+    \end{tabular}
+    \end{center}
+    }
+    \caption{T-Test Results for DepthCount Crash Fault Outcomes}
+    \label{tab:DepthCount_Crash_TTest}
+\end{table}
+
+\begin{table}[htbp]
+\small{
+\begin{center}
+    \begin{tabular}{|p{0.7cm}|c|c|c|c|c|}
+    \hline
+    \textbf{Input} & \textbf{Fault} & \textbf{$n_0$ (SE)} & \textbf{$n_p$ (SE)} & \textbf{t} & \textbf{p} \\ \hline
+    \multirow{5}{*}{8}
     & A & 335(14.93) & 353(15.11) & 0.8474 & 0.3969 \\
 	& B & 78(8.48) & 63(7.68) & 1.3111 &  0.1900 \\
  	& C & 247(13.64) & 374(15.30) & 6.1959 & $<$0.001 \\
@@ -270,12 +301,56 @@ In the case of Mandelbrot, the gap between fault resiliencies of the program and
     \label{tab:Fannkuch_TTest}
 \end{table}
 
-\begin{table}[!htb]
+\begin{table}[htbp]
 \small{
 \begin{center}
     \begin{tabular}{|p{0.7cm}|c|c|c|c|c|}
     \hline
     \textbf{Input} & \textbf{Fault} & \textbf{$n_0$ (SE)} & \textbf{$n_p$ (SE)} & \textbf{t} & \textbf{p} \\ \hline
+    \multirow{5}{*}{8}
+    & A & 443(15.71) & 427(15.64) & 0.7218 & 0.4705 \\
+	& B & 11(3.30) & 5(2.23) & 1.5065 & 0.1321 \\
+ 	& C & 535(15.77) & 402(15.50) & 6.0148 & $<$0.001 \\
+ 	& D & 467(15.78) & 442(15.70) & 1.1231 & 0.2615 \\
+ 	& E & 476(15.79) & 503(15.81) & 1.2083 & 0.2271 \\ \hline
+    \multirow{5}{*}{9}
+    & A & 460(15.76) & 461(15.76) & 0.0449 & 0.9642 \\
+	& B & 53(7.08) & 25(4.94) & 3.2433 & 0.0012 \\
+ 	& C & 259(13.85) & 282(14.23) & 1.1583 & 0.2469 \\
+ 	& D & 440(15.70) & 435(15.68) & 0.2253 & 0.8217 \\
+ 	& E & 346(15.04) & 450(15.73) & 4.7787 & $<$0.001 \\ \hline
+ 	\multirow{5}{*}{10}
+    & A & 372(15.28) & 429(15.65) & 2.6060 & 0.0092 \\
+	& B & 23(4.74) & 56(7.27) & 3.8024 & $<$0.001 \\
+ 	& C & 440(15.70) & 440(15.70) & 0.0000 & 1.0000 \\
+ 	& D & 389(15.42) & 420(15.61) & 1.4128 & 0.1579 \\
+ 	& E & 407(15.54) & 432(15.66) & 1.1346 & 0.2567 \\ \hline
+    \hline
+    \end{tabular}
+    \end{center}
+    }
+    \caption{T-Test Results for Fannkuch Crash Fault Outcomes}
+    \label{tab:Fannkuch_Crash_TTest}
+\end{table}
+
+\begin{table}[htbp]
+\small{
+\begin{center}
+    \begin{tabular}{|p{0.7cm}|c|c|c|c|c|}
+    \hline
+    \textbf{Input} & \textbf{Fault} & \textbf{$n_0$ (SE)} & \textbf{$n_p$ (SE)} & \textbf{t} & \textbf{p} \\ \hline
+    \multirow{5}{*}{10}
+    & A & 44(6.49) & 79(8.53) & 3.2655 & 0.0011 \\
+	& B & 13(3.58) & 22(4.64) & 1.5357 & 0.1248 \\
+ 	& C & 53(7.08) & 66(7.85) & 1.2298 & 0.2189 \\
+ 	& D & 42(6.34) & 72(8.17) & 2.9010 & 0.0038 \\
+ 	& E & 34(5.73) & 64(7.74) & 3.1152 & 0.0019 \\ \hline
+ 	\multirow{5}{*}{100}
+    & A & 22(4.64) & 32(5.57) & 1.3794 & 0.1679 \\
+	& B & 46(6.62) & 30(5.39) & 1.8742 & 0.0610 \\
+ 	& C & 63(7.68) & 83(8.72) & 1.7212 & 0.0854 \\
+ 	& D & 41(6.27) & 43(6.41) & 0.2230 & 0.8235 \\
+ 	& E & 61(7.57) & 83(8.72) & 1.9052 & 0.0569 \\ \hline
     \multirow{5}{*}{1000}
     & A & 57(7.33) & 100(9.49) & 3.5860 & $<$0.001 \\
 	& B & 28(5.22) & 34(5.73) & 0.7741 &  0.4390 \\
@@ -302,7 +377,7 @@ We also measure the execution times $P_t$ and $P'_t$ in milliseconds, operating 
 In both Depthcount and Mandelbrot, we see that the sizes of their original IR code have been compacted by the partial evaluation pass.
 Interestingly, the partial evaluation pass increases the IR size of Fannkuch.
 This occurrence is due to the inlining of repetitive function calls.
-In this case, instruction combining eliminated fewer instructions than inlined.
+In this case, function inlining produced more instructions than instruction combining could eliminate.
 Despite this setback, the partial evaluation executes faster than its original program due to the reduced number of stack operations and fewer dynamic instructions overall. 
    
 We observe that $\psi$ is marginal for Depthcount, but is significant for Fannkuch and Mandelbrot.

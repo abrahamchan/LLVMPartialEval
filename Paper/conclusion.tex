@@ -1,3 +1,11 @@
 \section{Conclusion}
 \label{sec:conclusion}
-Forthcoming.
+
+As programs increase in complexity, program optimizations are progressively deployed to improve program performance.
+Partial evaluation is an aggressive form of program optimization that can be applied when the program inputs are known at compile time.
+Despite the performance gains offered by partial evaluations, it remains unclear whether the partial evaluations degrade the error resilience of the original program.
+We answer this question by implementing partial evaluation as a compiler pass and designing a fault injection experiment to statistically compare the error resilience of the partial evaluation with its original implementation.
+Our results show that there is no statistical difference between their error resiliency over most fault types.
+However, the validity of this observation depends on the injected fault type on a program.
+In some cases, a partial evaluation may not be a satisfactory optimization for tolerating certain types of faults.
+Therefore, we conclude that partial evaluations generally do not diminish a program's error resilience over most fault types. 
