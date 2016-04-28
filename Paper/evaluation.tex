@@ -35,6 +35,7 @@ In practice, partial evaluations are deployed on program modules rather than on 
 Therefore, the benchmark programs selected in this study focus on scientific algorithms including DepthCount, Fannkuch, and Mandelbrot.
 DepthCount traverses the nodes of a binary tree and counts the number of trees at each depth.
 Fannkuch, also known as pancake flipping, takes a permutation of a set of integers up to a number N, and computes the total number of possible permutations by flipping neighbour elements.
+This benchmark contains a variety of array swapping operations.
 Mandelbrot is a mathematical application that generates the set of complex numbers, for which the orbits of the quadratic recurrence equation do not diverge.
 The generated set of complex numbers is plotted on the complex plane as a binary image file.
 
@@ -269,7 +270,7 @@ In the case of Mandelbrot, the gap between fault resiliencies of the program and
     \label{tab:Fannkuch_TTest}
 \end{table}
 
-\begin{table}[htbp]
+\begin{table}[!htb]
 \small{
 \begin{center}
     \begin{tabular}{|p{0.7cm}|c|c|c|c|c|}
@@ -289,13 +290,21 @@ In the case of Mandelbrot, the gap between fault resiliencies of the program and
     \label{tab:Mandelbrot_TTest}
 \end{table}
 
+
 \begin{obs}
   \label{obs:speedup}
   The speed up factor of program partial evaluations increases when the program load increases, without significantly impacting the fault outcome rate.
 \end{obs}
 
-In Table~\ref{tab:benchmarks}, we measure the lines of IR instructions of the original program and its partial evaluation, denoted by $P_s$ and $P'_s$ respectively.
+In Table~\ref{tab:benchmarks}, we measure the lines of static IR instructions of the original program and its partial evaluation, denoted by $P_s$ and $P'_s$ respectively.
 We also measure the execution times $P_t$ and $P'_t$ in milliseconds, operating under different program inputs. 
+
+In both Depthcount and Mandelbrot, we see that the sizes of their original IR code have been compacted by the partial evaluation pass.
+Interestingly, the partial evaluation pass increases the IR size of Fannkuch.
+This occurrence is due to the inlining of repetitive function calls.
+In this case, instruction combining eliminated fewer instructions than inlined.
+Despite this setback, the partial evaluation executes faster than its original program due to the reduced number of stack operations and fewer dynamic instructions overall. 
+   
 We observe that $\psi$ is marginal for Depthcount, but is significant for Fannkuch and Mandelbrot.
 Additionally, in the latter benchmarks, $\psi$ increases when the input load is increased.
 
@@ -330,7 +339,7 @@ The average difference is 2\% among all fault types for a speedup factor of 136.
     \end{tabular}
     \end{center}
     }
-    \caption{IR Sizes and Average Execution Times of Benchmark Programs}
+    \caption{IR LOC and Average Execution Times of Benchmark Programs}
     \label{tab:benchmarks}
 \end{table}
 

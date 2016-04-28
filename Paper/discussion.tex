@@ -4,10 +4,27 @@ In this section, we first present the implications of our results, and then the 
 
 \subsection{Implications}
 \label{sec:implications}
-Forthcoming.
+In this paper, we attempted to answer the question of whether program partial evaluations possess a statistically different error resilience compared to their original implementations. 
+Through a series of fault injection experiments and t-tests performed on the fault outcome rates, we observe in our benchmarks that the error resiliencies between a program and its partial evaluation are not statistically different from each other.
+
+We also notice that the p-values in Tables [\ref{tab:DepthCount_TTest}-\ref{tab:Mandelbrot_TTest}] differ across injected fault types on the same program configuration.
+For example, we see in Table~\ref{tab:Fannkuch_TTest} for N=9 that the p-values are beyond the 95\% confidence interval for fault types B and D, but are within bounds for fault types A, C and E.   
+This information implies that partial evaluations may not be well suited for programs that are expected to tolerate certain types of faults. 
+
+Furthermore, in partial evaluations that offer significant speed up over its original program, the differences in error resilience are observed to be only marginal. These observations suggest that programs can opt for more aggressive optimizations without a substantial deterioration in system reliability.
+The study of relations between the level of partial evaluation aggressiveness and its impact on fault tolerance serves as a direction for possible future work.
 
 
 \subsection{Threats to Validity}
 \label{sec:validity}
-Forthcoming.
 There are two threats to validity in our results.
+First, we evaluate the results based on one implementation of partial evaluation.
+Since our form of partial evaluation favours the promotion of function calls into constants, the resulting partial evaluation may yield better resilience towards function call corruption or return value corruption faults.
+Alternatively, other implementations may focus on eliminating branch conditions and loop conditions over the elimination of function calls.
+In those cases, the error resilience of partial evaluations towards return value or function call corruptions may be degraded. 
+
+Secondly, we have only conducted our evaluation on several benchmarks.
+Although these benchmarks represent the implementations of common scientific algorithms, utilizing data structures such as arrays and pointers, the subtleties of their implementations may potentially skew the results obtained.
+Particularly, it remains to be seen whether programs using robust data structures with fault detection and correction capabilities retain their error resilience in their partial evaluations.
+
+
